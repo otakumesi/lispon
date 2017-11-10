@@ -19,24 +19,39 @@ func (s SExpr) eval() Lispable {
 	return symbol.toFunc()(lhs, rhs)
 }
 
-type OperatorEvaluable interface {
-	canOperatorEvaluate() bool
+type Addable interface {
+	Add(Addable) Lispable
 }
 
 type Number float64
 
-func (a Number) eval() Lispable {
-	return a
+func (n Number) eval() Lispable {
+	return n
+}
+
+func (n Number) Add(an Lispable) Lispable {
+	switch rn := an.(type) {
+	case Number:
+		return n + rn
+	case Cons:
+		num := rn.lhs.(Number)
+		return n + num.Add(rn.rhs).(Number)
+	case Nil:
+		return n
+	}
+	panic("TypeError")
 }
 
 func Add(lhs, rhs Lispable) Lispable {
-	l, err := lhs.(OperatorEvaluable)
-	r, err := rhs.(OperatorEvaluable)
-	return lhs + rhs
-}
-
-func AddNumber(lhs, rhs Number) Number {
-	return lhs + rhs
+	switch l := lhs.(type) {
+	case Number:
+		return l.Add(rhs)
+	case Symbol:
+		return l.Add(rhs)
+	case Cons:
+		return l.Add(rhs)
+	}
+	panic("TypeError")
 }
 
 type Symbol string
@@ -45,13 +60,30 @@ func (s Symbol) eval() Lispable {
 	return s
 }
 
+func (s Symbol) Add(as Lispable) Lispable {
+	switch rs := as.(type) {
+	case Symbol:
+		return s + rs
+	case Cons:
+		sym := rs.lhs.(Symbol)
+		return s + sym.Add(rs.rhs).(Symbol)
+	case Nil:
+		return s + ""
+	}
+	panic("TypeError")
+}
+
 func (s Symbol) toFunc() func(lhs, rhs Lispable) Lispable {
-	return Add
+	return funcTable[s]
 }
 
 type Cons struct {
-	value Lispable
-	cons *Cons
+	lhs Lispable
+	rhs Lispable
+}
+
+func (c Cons) Add(ac Lispable) Lispable {
+	return Cons{rhs: c, lhs: ac}
 }
 
 func (c Cons) eval() Lispable {
@@ -62,10 +94,24 @@ func eval(l Lispable) Lispable {
 	return l.eval()
 }
 
+type Nil struct{}
+
+func (n Nil) eval() Lispable {
+	return n
+}
+
+type FuncTable map[Symbol]func(Lispable, Lispable) Lispable
+
+var funcTable = FuncTable{
+	Symbol("+"): Add,
+}
+
 func main() {
-	sym := Symbol("plus")
-	lhs := Number(3)
-	rhs := Number(5)
+	sym := Symbol("+")
+	lhs := Symbol("otaku")
+	cons_l := Symbol("mesi")
+	cons_r := Symbol("!!!")
+	rhs := Cons{cons_l, cons_r}
 	lisp := SExpr{sym, lhs, rhs}
 	fmt.Println(eval(lisp))
 }
