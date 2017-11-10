@@ -19,10 +19,24 @@ func (s SExpr) eval() Lispable {
 	return symbol.toFunc()(lhs, rhs)
 }
 
+type OperatorEvaluable interface {
+	canOperatorEvaluate() bool
+}
+
 type Number float64
 
 func (a Number) eval() Lispable {
 	return a
+}
+
+func Add(lhs, rhs Lispable) Lispable {
+	l, err := lhs.(OperatorEvaluable)
+	r, err := rhs.(OperatorEvaluable)
+	return lhs + rhs
+}
+
+func AddNumber(lhs, rhs Number) Number {
+	return lhs + rhs
 }
 
 type Symbol string
@@ -35,14 +49,13 @@ func (s Symbol) toFunc() func(lhs, rhs Lispable) Lispable {
 	return Add
 }
 
-func Add(lhs, rhs Lispable) Lispable {
-	l := lhs.(Number)
-	r := rhs.(Number)
-	return AddNumber(l, r)
+type Cons struct {
+	value Lispable
+	cons *Cons
 }
 
-func AddNumber(lhs, rhs Number) Number {
-	return lhs + rhs
+func (c Cons) eval() Lispable {
+	return c
 }
 
 func eval(l Lispable) Lispable {
