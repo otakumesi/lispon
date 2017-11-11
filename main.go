@@ -19,14 +19,46 @@ func (s SExpr) eval() Lispable {
 	return symbol.toFunc()(lhs, rhs)
 }
 
-type Addable interface {
-	Add(Addable) Lispable
-}
-
 type Number float64
 
 func (n Number) eval() Lispable {
 	return n
+}
+
+type Addable interface {
+	Add(Lispable) Lispable
+}
+
+func Add(lhs, rhs Lispable) Lispable {
+	receiver, ok := lhs.(Addable)
+	if !ok {
+		panic("TypeError")
+	}
+	return receiver.Add(rhs)
+}
+
+func Sub(lhs, rhs Lispable) Lispable {
+	switch l := lhs.(type) {
+	case Number:
+		return l.Sub(rhs)
+	}
+	panic("TypeError")
+}
+
+func Mul(lhs, rhs Lispable) Lispable {
+	switch l := lhs.(type) {
+	case Number:
+		return l.Mul(rhs)
+	}
+	panic("TypeError")
+}
+
+func Div(lhs, rhs Lispable) Lispable {
+	switch l := lhs.(type) {
+	case Number:
+		return l.Div(rhs)
+	}
+	panic("TypeError")
 }
 
 func (n Number) Add(an Lispable) Lispable {
@@ -34,22 +66,49 @@ func (n Number) Add(an Lispable) Lispable {
 	case Number:
 		return n + rn
 	case Cons:
-		num := rn.lhs.(Number)
-		return n + num.Add(rn.rhs).(Number)
+		num := rn.Car.(Number)
+		return n + num.Add(rn.Cdr).(Number)
 	case Nil:
-		return n
+		return Number(0)
 	}
 	panic("TypeError")
 }
 
-func Add(lhs, rhs Lispable) Lispable {
-	switch l := lhs.(type) {
+func (n Number) Sub(an Lispable) Lispable {
+	switch rn := an.(type) {
 	case Number:
-		return l.Add(rhs)
-	case Symbol:
-		return l.Add(rhs)
+		return n + rn
 	case Cons:
-		return l.Add(rhs)
+		num := rn.Car.(Number)
+		return n + num.Sub(rn.Cdr).(Number)
+	case Nil:
+		return Number(0)
+	}
+	panic("TypeError")
+}
+
+func (n Number) Mul(an Lispable) Lispable {
+	switch rn := an.(type) {
+	case Number:
+		return n * rn
+	case Cons:
+		num := rn.Car.(Number)
+		return n * num.Mul(rn.Cdr).(Number)
+	case Nil:
+		return Number(1)
+	}
+	panic("TypeError")
+}
+
+func (n Number) Div(an Lispable) Lispable {
+	switch rn := an.(type) {
+	case Number:
+		return n / rn
+	case Cons:
+		num := rn.Car.(Number)
+		return n / num.Div(rn.Cdr).(Number)
+	case Nil:
+		return Number(1)
 	}
 	panic("TypeError")
 }
@@ -65,8 +124,8 @@ func (s Symbol) Add(as Lispable) Lispable {
 	case Symbol:
 		return s + rs
 	case Cons:
-		sym := rs.lhs.(Symbol)
-		return s + sym.Add(rs.rhs).(Symbol)
+		sym := rs.Car.(Symbol)
+		return s + sym.Add(rs.Cdr).(Symbol)
 	case Nil:
 		return s + ""
 	}
@@ -78,12 +137,12 @@ func (s Symbol) toFunc() func(lhs, rhs Lispable) Lispable {
 }
 
 type Cons struct {
-	lhs Lispable
-	rhs Lispable
+	Car Lispable
+	Cdr Lispable
 }
 
 func (c Cons) Add(ac Lispable) Lispable {
-	return Cons{rhs: c, lhs: ac}
+	return Cons{Car: c, Cdr: ac}
 }
 
 func (c Cons) eval() Lispable {
@@ -104,13 +163,16 @@ type FuncTable map[Symbol]func(Lispable, Lispable) Lispable
 
 var funcTable = FuncTable{
 	Symbol("+"): Add,
+	Symbol("-"): Sub,
+	Symbol("*"): Mul,
+	Symbol("/"): Div,
 }
 
 func main() {
 	sym := Symbol("+")
 	lhs := Symbol("otaku")
 	cons_l := Symbol("mesi")
-	cons_r := Symbol("!!!")
+	cons_r := Cons{Symbol("!!!"), Nil{}}
 	rhs := Cons{cons_l, cons_r}
 	lisp := SExpr{sym, lhs, rhs}
 	fmt.Println(eval(lisp))
