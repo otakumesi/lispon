@@ -21,15 +21,20 @@ func (n Number) AddNumber(on Number) Evaluable {
 }
 
 func (n Number) AddCons(c Cons) Evaluable {
-	re := c.Car.(Number)
+	re, ok := c.car.(Number)
+
+	if !ok {
+		panic("TypeError")
+	}
+
 	sum := n + re
 
-	_, isNil := c.Cdr.(Nil)
+	_, isNil := c.cdr.(Nil)
 	if isNil {
 		return sum
 	}
 
-	return sum.Add(c.Cdr)
+	return sum.Add(c.cdr)
 }
 
 func (n Number) Sub(an Evaluable) Evaluable {
@@ -47,15 +52,20 @@ func (n Number) SubNumber(on Number) Evaluable {
 }
 
 func (n Number) SubCons(c Cons) Evaluable {
-	re := c.Car.(Number)
+	re, ok := c.car.(Number)
+
+	if !ok {
+		panic("TypeError")
+	}
+
 	sum := n - re
 
-	_, isNil := c.Cdr.(Nil)
+	_, isNil := c.cdr.(Nil)
 	if isNil {
 		return sum
 	}
 
-	return sum.Sub(c.Cdr)
+	return sum.Sub(c.cdr)
 }
 
 func (n Number) Mul(an Evaluable) Evaluable {
@@ -73,15 +83,20 @@ func (n Number) MulNumber(on Number) Evaluable {
 }
 
 func (n Number) MulCons(c Cons) Evaluable {
-	re := c.Car.(Number)
+	re, ok := c.car.(Number)
+
+	if !ok {
+		panic("TypeError")
+	}
+
 	sum := n * re
 
-	_, isNil := c.Cdr.(Nil)
+	_, isNil := c.cdr.(Nil)
 	if isNil {
 		return sum
 	}
 
-	return sum.Mul(c.Cdr)
+	return sum.Mul(c.cdr)
 }
 
 func (n Number) Div(an Evaluable) Evaluable {
@@ -99,13 +114,18 @@ func (n Number) DivNumber(on Number) Evaluable {
 }
 
 func (n Number) DivCons(c Cons) Evaluable {
-	re := c.Car.(Number)
+	re, ok := c.car.(Number)
+
+	if !ok {
+		panic("TypeError")
+	}
+
 	sum := n / re
 
-	_, isNil := c.Cdr.(Nil)
+	_, isNil := c.cdr.(Nil)
 	if isNil {
 		return sum
 	}
 
-	return sum.Div(c.Cdr)
+	return sum.Div(c.cdr)
 }
