@@ -8,51 +8,51 @@ type Adder interface {
 	Add(Evaluable) Evaluable
 }
 
-func Add(lhs, rhs Evaluable) Evaluable {
-	receiver, ok := lhs.(Adder)
+func Add(cons Cons) Evaluable {
+	receiver, ok := cons.Car.(Adder)
 	if !ok {
 		panic("TypeError")
 	}
-	return receiver.Add(rhs)
+	return receiver.Add(cons.Cdr)
 }
 
 type Suber interface {
 	Sub(Evaluable) Evaluable
 }
 
-func Sub(lhs, rhs Evaluable) Evaluable {
-	receiver, ok := lhs.(Suber)
+func Sub(cons Cons) Evaluable {
+	receiver, ok := cons.Car.(Suber)
 	if !ok {
 		panic("TypeError")
 	}
-	return receiver.Sub(rhs)
+	return receiver.Sub(cons.Cdr)
 }
 
 type Muler interface {
 	Mul(Evaluable) Evaluable
 }
 
-func Mul(lhs, rhs Evaluable) Evaluable {
-	receiver, ok := lhs.(Muler)
+func Mul(cons Cons) Evaluable {
+	receiver, ok := cons.Car.(Muler)
 	if !ok {
 		panic("TypeError")
 	}
-	return receiver.Mul(rhs)
+	return receiver.Mul(cons.Cdr)
 }
 
 type Diver interface {
 	Div(Evaluable) Evaluable
 }
 
-func Div(lhs, rhs Evaluable) Evaluable {
-	receiver, ok := lhs.(Diver)
+func Div(cons Cons) Evaluable {
+	receiver, ok := cons.Car.(Diver)
 	if !ok {
 		panic("TypeError")
 	}
-	return receiver.Div(rhs)
+	return receiver.Div(cons.Cdr)
 }
 
-func eval(l Evaluable) Evaluable {
+func Eval(l Evaluable) Evaluable {
 	return l.eval()
 }
 

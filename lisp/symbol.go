@@ -11,6 +11,7 @@ func (s Symbol) Add(as Evaluable) Evaluable {
 	case Symbol:
 		return s.AddSym(rs)
 	case Cons:
+		return s.AddCons(rs)
 	case Nil:
 		return s + ""
 	}
@@ -22,22 +23,18 @@ func (s Symbol) AddSym(as Symbol) Evaluable {
 }
 
 func (s Symbol) AddCons(c Cons) Evaluable {
-	car, ok := c.car.(Symbol)
+	Car, ok := c.Car.(Symbol)
 
 	if !ok {
 		panic("TypeError")
 	}
 
-	result := s + car
+	result := s + Car
 
-	_, isNil := c.cdr.(Nil)
+	_, isNil := c.Cdr.(Nil)
 	if isNil {
 		return result
 	}
 
-	return result.Add(c.cdr)
-}
-
-func (s Symbol) toFunc() func(lhs, rhs Evaluable) Evaluable {
-	return funcTable[s]
+	return result.Add(c.Cdr)
 }

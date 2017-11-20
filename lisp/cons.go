@@ -1,12 +1,12 @@
 package lisp
 
 type Cons struct {
-	car Evaluable
-	cdr Evaluable
+	Car Evaluable
+	Cdr Evaluable
 }
 
 func (c Cons) Add(ac Evaluable) Evaluable {
-	return Cons{car: c, cdr: ac}
+	return Cons{Car: c, Cdr: ac}
 }
 
 func (c Cons) eval() Evaluable {

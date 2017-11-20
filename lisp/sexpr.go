@@ -2,17 +2,14 @@ package lisp
 
 type SExpr struct {
 	symbol Symbol
-	lhs    Evaluable
-	rhs    Evaluable
+	args   Cons
 }
 
-func NewSExpr(sym Symbol, lhs, rhs Evaluable) SExpr {
-	return SExpr{sym, lhs, rhs}
+func NewSExpr(sym Symbol, args Cons) SExpr {
+	return SExpr{sym, args}
 }
 
-func (s SExpr) Eval() Evaluable {
+func (s SExpr) eval() Evaluable {
 	symbol := s.symbol
-	lhs := s.lhs.eval()
-	rhs := s.rhs.eval()
-	return symbol.toFunc()(lhs, rhs)
+	return symbol.call(s.args)
 }
