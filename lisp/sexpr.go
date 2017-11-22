@@ -10,6 +10,9 @@ func NewSExpr(sym Symbol, args Cons) SExpr {
 }
 
 func (s SExpr) eval() Evaluable {
-	symbol := s.symbol
-	return symbol.call(s.args)
+	proc, ok := s.symbol.eval().(Proc)
+	if !ok {
+		panic("Type Error")
+	}
+	return proc(s.args)
 }
