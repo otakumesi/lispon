@@ -15,6 +15,6 @@ func main() {
 func RunLisp() {
 	lisp.Init()
 	rootAst := parser.Parse(os.Args[1])
-	sexpr := parser.SexprWalk(rootAst)
+	sexpr := parser.ParseSExpr(rootAst)
 	fmt.Println(lisp.Eval(sexpr))
 }

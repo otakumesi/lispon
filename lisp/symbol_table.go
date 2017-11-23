@@ -20,10 +20,6 @@ func (b Bool) eval() Evaluable {
 	return b
 }
 
-func Eq(lhs, rhs Evaluable) Evaluable {
-	return Bool(lhs == rhs)
-}
-
 type SymbolTable map[String]Evaluable
 
 var symbolTable = SymbolTable{}
