@@ -34,11 +34,11 @@ func Parse(input string) parsec.Queryable {
 	return node
 }
 
-func SexprWalk(ast parsec.Queryable) lisp.Evaluable {
+func parseSExpr(ast parsec.Queryable) lisp.Evaluable {
 	children := ast.GetChildren()
 	switch ast.GetName() {
 	case "sexpr":
-		return createSexpr(children)
+		return createSExpr(children)
 	case "items":
 		return createItems(children)
 	case "item":
@@ -69,20 +69,20 @@ func SexprWalk(ast parsec.Queryable) lisp.Evaluable {
 
 func createItems(children []parsec.Queryable) lisp.Evaluable {
 	if len(children) < 2 {
-		return SexprWalk(children[0])
+		return parseSExpr(children[0])
 	}
-	return lisp.Cons{SexprWalk(children[0]), SexprWalk(children[1])}
+	return lisp.Cons{parseSExpr(children[0]), parseSExpr(children[1])}
 }
 
 func createItem(children []parsec.Queryable) lisp.Evaluable {
-	return SexprWalk(children[0])
+	return parseSExpr(children[0])
 }
 
-func createSexpr(children []parsec.Queryable) lisp.SExpr {
+func createSExpr(children []parsec.Queryable) lisp.SExpr {
 	sym := lisp.Symbol{lisp.String(children[1].GetValue()), false}
 
-	lhs := SexprWalk(children[2])
-	rhs := SexprWalk(children[3])
+	lhs := parseSExpr(children[2])
+	rhs := parseSExpr(children[3])
 
 	return lisp.NewSExpr(sym, lhs, rhs)
 }
