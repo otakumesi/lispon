@@ -1,17 +1,17 @@
 package lisp
 
-type Proc func(Cons) Evaluable
+type Proc func(Evaluable, Evaluable) Evaluable
 
 func (f Proc) eval() Evaluable {
 	return f
 }
 
-func (s Symbol) call(args Cons) Evaluable {
+func (s Symbol) call(lhs, rhs Evaluable) Evaluable {
 	fn, ok := symbolTable[s.Name].(Proc)
 	if !ok {
 		panic("Type Error")
 	}
-	return fn(args)
+	return fn(lhs, rhs)
 }
 
 type Bool bool
@@ -20,8 +20,8 @@ func (b Bool) eval() Evaluable {
 	return b
 }
 
-func Eq(cons Cons) Evaluable {
-	return Bool(cons.Car == cons.Cdr)
+func Eq(lhs, rhs Evaluable) Evaluable {
+	return Bool(lhs == rhs)
 }
 
 type SymbolTable map[String]Evaluable
@@ -36,24 +36,24 @@ func Init() {
 		String("/"):      Proc(Div),
 		String("eq"):     Proc(Eq),
 		String("define"): Proc(Define),
-		String("lambda"): Proc(Lambda),
+		// String("lambda"): Proc(Lambda),
 	}
 }
 
-func Define(cons Cons) Evaluable {
-	symbol, ok := cons.Car.(Symbol)
+func Define(sym Evaluable, value Evaluable) Evaluable {
+	symbol, ok := sym.(Symbol)
 	if !ok {
 		panic("Type Error")
 	}
 
-	symbolTable[symbol.Name] = cons
+	symbolTable[symbol.Name] = value
 	return Nil{}
 }
 
-func Lambda(cons Cons) Evaluable {
-	// attr := cons.Car
-	f := func(e Cons) Evaluable {
-		return SExpr{}
-	}
-	return Proc(f)
-}
+// func Lambda(cons Cons) Evaluable {
+//  		// attr := cons.Car
+//  		f := func(e Cons) Evaluable {
+//  			return SExpr{}
+//  		}
+//  		return Proc(f)
+// }

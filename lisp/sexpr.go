@@ -2,11 +2,12 @@ package lisp
 
 type SExpr struct {
 	symbol Symbol
-	args   Cons
+	rhs    Evaluable
+	lhs    Evaluable
 }
 
-func NewSExpr(sym Symbol, args Cons) SExpr {
-	return SExpr{sym, args}
+func NewSExpr(sym Symbol, rhs, lhs Evaluable) SExpr {
+	return SExpr{sym, rhs, lhs}
 }
 
 func (s SExpr) eval() Evaluable {
@@ -14,5 +15,5 @@ func (s SExpr) eval() Evaluable {
 	if !ok {
 		panic("Type Error")
 	}
-	return proc(s.args)
+	return proc(s.rhs, s.lhs)
 }
