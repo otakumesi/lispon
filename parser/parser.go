@@ -15,7 +15,7 @@ func Parse(input string) parsec.Queryable {
 	closeSexpr := parsec.Atom(")", "CLOSE_SEXPR")
 	operator := parsec.Token(`[+-/*%]`, "OPERATOR")
 	quoteSymbol := parsec.Token(`'[A-Za-z][0-9a-zA-Z_]*`, "QUOTED_SYMBOL")
-	function := ast.OrdChoice("function", nil, operator, parsec.Ident())
+	symbol := ast.OrdChoice("symbol", nil, operator, parsec.Ident())
 	item := ast.OrdChoice(
 		"item",
 		nil,
@@ -28,7 +28,15 @@ func Parse(input string) parsec.Queryable {
 
 	var items parsec.Parser
 	items = ast.And("items", nil, item, ast.Maybe("args", nil, &items))
-	sexpr = ast.And("sexpr", nil, openSexpr, function, item, items, closeSexpr)
+	sexpr = ast.And(
+		"sexpr",
+		nil,
+		openSexpr,
+		symbol,
+		ast.Maybe("lhs", nil, item),
+		ast.Maybe("rhs", nil, items),
+		closeSexpr,
+	)
 	s := parsec.NewScanner([]byte(input))
 	node, s := ast.Parsewith(sexpr, s)
 	return node
