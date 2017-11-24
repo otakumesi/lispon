@@ -5,7 +5,6 @@ func Define(sym Evaluable, value Evaluable) Evaluable {
 	if !ok {
 		panic("Type Error")
 	}
-
 	symbolTable[symbol.Name] = value
 	return symbol
 }

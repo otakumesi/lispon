@@ -2,18 +2,41 @@ package lisp
 
 type SExpr struct {
 	symbol Symbol
-	rhs    Evaluable
 	lhs    Evaluable
+	rhs    Evaluable
 }
 
-func NewSExpr(sym Symbol, rhs, lhs Evaluable) SExpr {
-	return SExpr{sym, rhs, lhs}
+func NewSExpr(sym Symbol, args ...Args) SExpr {
+	sexpr := SExpr{sym, Nil{}, Nil{}}
+	for _, arg := range args {
+		arg(&sexpr)
+	}
+	return sexpr
+}
+
+type Args func(*SExpr)
+
+func SetLhs(lhs Evaluable) Args {
+	return func(s *SExpr) {
+		if lhs != nil {
+			s.lhs = lhs
+		}
+	}
+}
+
+func SetRhs(rhs Evaluable) Args {
+	return func(s *SExpr) {
+		if rhs != nil {
+			s.rhs = rhs
+		}
+	}
 }
 
 func (s SExpr) eval() Evaluable {
-	proc, ok := s.symbol.eval().(Proc)
+	symbol := s.symbol.eval()
+	proc, ok := symbol.(Proc)
 	if !ok {
-		panic("Type Error")
+		return symbol
 	}
-	return proc(s.rhs, s.lhs)
+	return proc(s.lhs, s.rhs)
 }

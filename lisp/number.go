@@ -6,18 +6,20 @@ func (n Number) eval() Evaluable {
 	return n
 }
 
-func (n Number) Add(e Evaluable) Evaluable {
-	switch re := e.(type) {
+func (n Number) Add(an Evaluable) Evaluable {
+	switch rn := an.(type) {
 	case Number:
-		return n.AddNumber(re)
+		return n.AddNumber(rn)
 	case Cons:
-		return n.AddCons(re)
+		return n.AddCons(rn)
+	case Symbol:
+		return n.Add(rn.eval())
 	}
 	panic("TypeError")
 }
 
-func (n Number) AddNumber(on Number) Evaluable {
-	return n + on
+func (n Number) AddNumber(an Number) Evaluable {
+	return n + an
 }
 
 func (n Number) AddCons(c Cons) Evaluable {
@@ -43,12 +45,14 @@ func (n Number) Sub(an Evaluable) Evaluable {
 		return n.SubNumber(rn)
 	case Cons:
 		return n.SubCons(rn)
+	case Symbol:
+		return n.Sub(rn.eval())
 	}
 	panic("TypeError")
 }
 
-func (n Number) SubNumber(on Number) Evaluable {
-	return n - on
+func (n Number) SubNumber(an Number) Evaluable {
+	return n - an
 }
 
 func (n Number) SubCons(c Cons) Evaluable {
@@ -74,6 +78,8 @@ func (n Number) Mul(an Evaluable) Evaluable {
 		return n.MulNumber(rn)
 	case Cons:
 		return n.MulCons(rn)
+	case Symbol:
+		return n.Mul(rn.eval())
 	}
 	panic("TypeError")
 }

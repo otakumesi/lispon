@@ -22,6 +22,7 @@ func Parse(input string) parsec.Queryable {
 		parsec.Int(),
 		parsec.Float(),
 		parsec.String(),
+		parsec.Ident(),
 		quoteSymbol,
 		&sexpr,
 	)
@@ -37,6 +38,7 @@ func Parse(input string) parsec.Queryable {
 		ast.Maybe("rhs", nil, items),
 		closeSexpr,
 	)
+
 	s := parsec.NewScanner([]byte(input))
 	node, s := ast.Parsewith(sexpr, s)
 	return node
@@ -69,14 +71,15 @@ func ParseSExpr(ast parsec.Queryable) lisp.Evaluable {
 		symName := lisp.String(ast.GetValue())
 		return lisp.Symbol{symName, false}
 	case "QUOTED_SYMBOL":
-		symName := lisp.String(ast.GetValue())
+		symbol := ast.GetValue()
+		symName := lisp.String(symbol[1:len(symbol)])
 		return lisp.Symbol{symName, true}
 	}
 	return lisp.Nil{}
 }
 
 func createItems(children []parsec.Queryable) lisp.Evaluable {
-	if len(children) < 2 {
+	if children[1].GetName() == "missing" {
 		return ParseSExpr(children[0])
 	}
 	return lisp.Cons{ParseSExpr(children[0]), ParseSExpr(children[1])}
@@ -89,8 +92,16 @@ func createItem(children []parsec.Queryable) lisp.Evaluable {
 func createSExpr(children []parsec.Queryable) lisp.SExpr {
 	sym := lisp.Symbol{lisp.String(children[1].GetValue()), false}
 
+	if len(children) < 2 {
+		return lisp.NewSExpr(sym)
+	}
 	lhs := ParseSExpr(children[2])
+
+	if len(children) < 3 {
+		return lisp.NewSExpr(sym, lisp.SetLhs(lhs))
+	}
+
 	rhs := ParseSExpr(children[3])
 
-	return lisp.NewSExpr(sym, lhs, rhs)
+	return lisp.NewSExpr(sym, lisp.SetLhs(lhs), lisp.SetRhs(rhs))
 }
