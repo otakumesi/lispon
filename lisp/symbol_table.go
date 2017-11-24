@@ -14,12 +14,6 @@ func (s Symbol) call(lhs, rhs Evaluable) Evaluable {
 	return fn(lhs, rhs)
 }
 
-type Bool bool
-
-func (b Bool) eval() Evaluable {
-	return b
-}
-
 type SymbolTable map[String]Evaluable
 
 var symbolTable = SymbolTable{}
@@ -35,21 +29,3 @@ func Init() {
 		// String("lambda"): Proc(Lambda),
 	}
 }
-
-func Define(sym Evaluable, value Evaluable) Evaluable {
-	symbol, ok := sym.(Symbol)
-	if !ok {
-		panic("Type Error")
-	}
-
-	symbolTable[symbol.Name] = value
-	return Nil{}
-}
-
-// func Lambda(cons Cons) Evaluable {
-//  		// attr := cons.Car
-//  		f := func(e Cons) Evaluable {
-//  			return SExpr{}
-//  		}
-//  		return Proc(f)
-// }
