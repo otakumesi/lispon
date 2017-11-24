@@ -9,16 +9,18 @@ func (s String) eval() Evaluable {
 func (s String) Add(as Evaluable) Evaluable {
 	switch rs := as.(type) {
 	case String:
-		return s.AddSym(rs)
+		return s.AddStr(rs)
 	case Cons:
 		return s.AddCons(rs)
+	case Symbol:
+		return s.Add(rs.eval())
 	case Nil:
 		return s + ""
 	}
 	panic("TypeError")
 }
 
-func (s String) AddSym(as String) Evaluable {
+func (s String) AddStr(as String) Evaluable {
 	return s + as
 }
 

@@ -15,15 +15,16 @@ func Parse(input string) parsec.Queryable {
 	closeSexpr := parsec.Atom(")", "CLOSE_SEXPR")
 	operator := parsec.Token(`[+-/*%]`, "OPERATOR")
 	quoteSymbol := parsec.Token(`'[A-Za-z][0-9a-zA-Z_]*`, "QUOTED_SYMBOL")
+	string := parsec.Token(`".*?"`, "STRING")
 	symbol := ast.OrdChoice("symbol", nil, operator, parsec.Ident())
 	item := ast.OrdChoice(
 		"item",
 		nil,
 		parsec.Int(),
 		parsec.Float(),
-		parsec.String(),
 		parsec.Ident(),
 		quoteSymbol,
+		string,
 		&sexpr,
 	)
 
@@ -66,13 +67,14 @@ func ParseSExpr(ast parsec.Queryable) lisp.Evaluable {
 		}
 		return lisp.Number(f)
 	case "STRING":
-		return lisp.String(ast.GetValue())
+		rawStr := ast.GetValue()
+		return lisp.String(rawStr[1 : len(rawStr)-1])
 	case "IDENT":
 		symName := lisp.String(ast.GetValue())
 		return lisp.Symbol{symName, false}
 	case "QUOTED_SYMBOL":
-		symbol := ast.GetValue()
-		symName := lisp.String(symbol[1:len(symbol)])
+		rawStr := ast.GetValue()
+		symName := lisp.String(rawStr[1:len(rawStr)])
 		return lisp.Symbol{symName, true}
 	}
 	return lisp.Nil{}
