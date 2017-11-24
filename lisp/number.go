@@ -111,12 +111,14 @@ func (n Number) Div(an Evaluable) Evaluable {
 		return n.DivNumber(rn)
 	case Cons:
 		return n.DivCons(rn)
+	case Symbol:
+		return n.Div(rn.eval())
 	}
 	panic("TypeError")
 }
 
-func (n Number) DivNumber(on Number) Evaluable {
-	return n * on
+func (n Number) DivNumber(an Number) Evaluable {
+	return n / an
 }
 
 func (n Number) DivCons(c Cons) Evaluable {
