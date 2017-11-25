@@ -6,7 +6,9 @@ type SExpr struct {
 	rhs    Evaluable
 }
 
-func NewSExpr(sym Symbol, args ...Args) SExpr {
+type SexprArgs func(*SExpr)
+
+func NewSExpr(sym Symbol, args ...SexprArgs) SExpr {
 	sexpr := SExpr{sym, Nil{}, Nil{}}
 	for _, arg := range args {
 		arg(&sexpr)
@@ -14,9 +16,7 @@ func NewSExpr(sym Symbol, args ...Args) SExpr {
 	return sexpr
 }
 
-type Args func(*SExpr)
-
-func SetLhs(lhs Evaluable) Args {
+func SetLhs(lhs Evaluable) SexprArgs {
 	return func(s *SExpr) {
 		if lhs != nil {
 			s.lhs = lhs
@@ -24,7 +24,7 @@ func SetLhs(lhs Evaluable) Args {
 	}
 }
 
-func SetRhs(rhs Evaluable) Args {
+func SetRhs(rhs Evaluable) SexprArgs {
 	return func(s *SExpr) {
 		if rhs != nil {
 			s.rhs = rhs
