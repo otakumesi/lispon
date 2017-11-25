@@ -1,13 +1,38 @@
 package lisp
 
 type Symbol struct {
-	Name     String
+	Name     string
 	IsQuoted bool
 }
 
-func (s Symbol) eval() Evaluable {
-	if s.IsQuoted {
-		return s.Name
+type SymbolOption func(*Symbol)
+
+func NewSymbol(name string, opts ...SymbolOption) Symbol {
+	sym := Symbol{name, false}
+	for _, opt := range opts {
+		opt(&sym)
 	}
+	return sym
+}
+
+func SetIsQuote(isQuoted bool) SymbolOption {
+	return func(s *Symbol) {
+		s.IsQuoted = isQuoted
+	}
+}
+
+func (s Symbol) eval(lss ...LocalScope) Evaluable {
+	if s.IsQuoted {
+		return String(s.Name)
+	}
+
+	for _, ls := range lss {
+		for name, val := range ls {
+			if name == s.Name {
+				return val
+			}
+		}
+	}
+
 	return symbolTable[s.Name]
 }

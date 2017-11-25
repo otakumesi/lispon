@@ -2,7 +2,7 @@ package lisp
 
 type Number float64
 
-func (n Number) eval() Evaluable {
+func (n Number) eval(lss ...LocalScope) Evaluable {
 	return n
 }
 
@@ -12,8 +12,6 @@ func (n Number) Add(an Evaluable) Evaluable {
 		return n.AddNumber(rn)
 	case Cons:
 		return n.AddCons(rn)
-	case Symbol:
-		return n.Add(rn.eval())
 	}
 	panic("TypeError")
 }
@@ -45,8 +43,6 @@ func (n Number) Sub(an Evaluable) Evaluable {
 		return n.SubNumber(rn)
 	case Cons:
 		return n.SubCons(rn)
-	case Symbol:
-		return n.Sub(rn.eval())
 	}
 	panic("TypeError")
 }
@@ -78,8 +74,6 @@ func (n Number) Mul(an Evaluable) Evaluable {
 		return n.MulNumber(rn)
 	case Cons:
 		return n.MulCons(rn)
-	case Symbol:
-		return n.Mul(rn.eval())
 	}
 	panic("TypeError")
 }
@@ -111,8 +105,6 @@ func (n Number) Div(an Evaluable) Evaluable {
 		return n.DivNumber(rn)
 	case Cons:
 		return n.DivCons(rn)
-	case Symbol:
-		return n.Div(rn.eval())
 	}
 	panic("TypeError")
 }

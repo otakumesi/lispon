@@ -7,16 +7,18 @@ import (
 	"github.com/prataprc/goparsec"
 )
 
+var RUNTIME_ERROR = "Runtime Error"
+
 func Parse(input string) parsec.Queryable {
-	var sexpr parsec.Parser
+	var expr parsec.Parser
+	var lambdaExpr parsec.Parser
 	ast := parsec.NewAST("lisp", 100)
 
 	openSexpr := parsec.Atom("(", "OPEN_SEXPR")
 	closeSexpr := parsec.Atom(")", "CLOSE_SEXPR")
-	operator := parsec.Token(`[+-/*%]`, "OPERATOR")
 	quoteSymbol := parsec.Token(`'[A-Za-z][0-9a-zA-Z_]*`, "QUOTED_SYMBOL")
 	string := parsec.Token(`".*?"`, "STRING")
-	symbol := ast.OrdChoice("symbol", nil, operator, parsec.Ident())
+
 	item := ast.OrdChoice(
 		"item",
 		nil,
@@ -25,13 +27,17 @@ func Parse(input string) parsec.Queryable {
 		parsec.Ident(),
 		quoteSymbol,
 		string,
-		&sexpr,
+		&lambdaExpr,
+		&expr,
 	)
 
 	var items parsec.Parser
 	items = ast.And("items", nil, item, ast.Maybe("args", nil, &items))
-	sexpr = ast.And(
-		"sexpr",
+
+	operator := parsec.Token(`[+-/*%]`, "OPERATOR")
+	symbol := ast.OrdChoice("symbol", nil, operator, parsec.Ident())
+	expr = ast.And(
+		"expr",
 		nil,
 		openSexpr,
 		symbol,
@@ -39,6 +45,32 @@ func Parse(input string) parsec.Queryable {
 		ast.Maybe("rhs", nil, items),
 		closeSexpr,
 	)
+
+	lambda := parsec.Token(`lambda`, "LAMBDA")
+	lambdaExpr = ast.And(
+		"lambdaExpr",
+		nil,
+		openSexpr,
+		lambda,
+		openSexpr,
+		items,
+		closeSexpr,
+		expr,
+		closeSexpr,
+	)
+
+	define := parsec.Token(`define`, "DEFINE")
+	defineExpr := ast.And(
+		"defineExpr",
+		nil,
+		openSexpr,
+		define,
+		quoteSymbol,
+		items,
+		closeSexpr,
+	)
+
+	sexpr := ast.OrdChoice("sexpr", nil, defineExpr, lambdaExpr, expr)
 
 	s := parsec.NewScanner([]byte(input))
 	node, s := ast.Parsewith(sexpr, s)
@@ -49,7 +81,13 @@ func ParseSExpr(ast parsec.Queryable) lisp.Evaluable {
 	children := ast.GetChildren()
 	switch ast.GetName() {
 	case "sexpr":
-		return createSExpr(children)
+		return ParseSExpr(ast.GetChildren()[0])
+	case "defineExpr":
+		return createDefine(children)
+	case "lambdaExpr":
+		return createLambda(children)
+	case "expr":
+		return createExpr(children)
 	case "items":
 		return createItems(children)
 	case "item":
@@ -70,12 +108,10 @@ func ParseSExpr(ast parsec.Queryable) lisp.Evaluable {
 		rawStr := ast.GetValue()
 		return lisp.String(rawStr[1 : len(rawStr)-1])
 	case "IDENT":
-		symName := lisp.String(ast.GetValue())
-		return lisp.Symbol{symName, false}
+		return lisp.NewSymbol(ast.GetValue())
 	case "QUOTED_SYMBOL":
 		rawStr := ast.GetValue()
-		symName := lisp.String(rawStr[1:len(rawStr)])
-		return lisp.Symbol{symName, true}
+		return lisp.NewSymbol(rawStr[1:len(rawStr)], lisp.SetIsQuote(true))
 	}
 	return lisp.Nil{}
 }
@@ -91,8 +127,8 @@ func createItem(children []parsec.Queryable) lisp.Evaluable {
 	return ParseSExpr(children[0])
 }
 
-func createSExpr(children []parsec.Queryable) lisp.SExpr {
-	sym := lisp.Symbol{lisp.String(children[1].GetValue()), false}
+func createExpr(children []parsec.Queryable) lisp.SExpr {
+	sym := lisp.NewSymbol(children[1].GetValue())
 
 	if len(children) < 2 {
 		return lisp.NewSExpr(sym)
@@ -102,8 +138,36 @@ func createSExpr(children []parsec.Queryable) lisp.SExpr {
 	if len(children) < 3 {
 		return lisp.NewSExpr(sym, lisp.SetLhs(lhs))
 	}
-
 	rhs := ParseSExpr(children[3])
 
 	return lisp.NewSExpr(sym, lisp.SetLhs(lhs), lisp.SetRhs(rhs))
+}
+
+func createDefine(children []parsec.Queryable) lisp.Evaluable {
+	argSym, ok := ParseSExpr(children[2]).(lisp.Symbol)
+
+	if !ok {
+		panic(RUNTIME_ERROR)
+	}
+
+	expr := ParseSExpr(children[3])
+	return lisp.Define(argSym, expr)
+}
+
+func createLambda(children []parsec.Queryable) lisp.Evaluable {
+	form, ok := ParseSExpr(children[5]).(lisp.SExpr)
+
+	if !ok {
+		panic(RUNTIME_ERROR)
+	}
+
+	var args []lisp.Symbol
+	for _, child := range children[3].GetChildren() {
+		argSym, ok := ParseSExpr(child).(lisp.Symbol)
+		if !ok {
+			panic(RUNTIME_ERROR)
+		}
+		args = append(args, argSym)
+	}
+	return lisp.Lambda(form, args...)
 }

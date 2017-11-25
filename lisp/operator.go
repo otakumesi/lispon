@@ -5,14 +5,7 @@ type Adder interface {
 }
 
 func Add(lhs, rhs Evaluable) Evaluable {
-	sym, isSym := lhs.(Symbol)
-	var adder Evaluable
-	if isSym {
-		adder = sym.eval()
-	} else {
-		adder = lhs
-	}
-	receiver, ok := adder.(Adder)
+	receiver, ok := lhs.(Adder)
 	if !ok {
 		panic("TypeError")
 	}
@@ -24,14 +17,7 @@ type Suber interface {
 }
 
 func Sub(lhs, rhs Evaluable) Evaluable {
-	sym, isSym := lhs.(Symbol)
-	var suber Evaluable
-	if isSym {
-		suber = sym.eval()
-	} else {
-		suber = lhs
-	}
-	receiver, ok := suber.(Suber)
+	receiver, ok := lhs.(Suber)
 	if !ok {
 		panic("TypeError")
 	}
@@ -43,14 +29,7 @@ type Muler interface {
 }
 
 func Mul(lhs, rhs Evaluable) Evaluable {
-	sym, isSym := lhs.(Symbol)
-	var muler Evaluable
-	if isSym {
-		muler = sym.eval()
-	} else {
-		muler = lhs
-	}
-	receiver, ok := muler.(Muler)
+	receiver, ok := lhs.(Muler)
 	if !ok {
 		panic("TypeError")
 	}
@@ -62,14 +41,7 @@ type Diver interface {
 }
 
 func Div(lhs, rhs Evaluable) Evaluable {
-	sym, isSym := lhs.(Symbol)
-	var diver Evaluable
-	if isSym {
-		diver = sym.eval()
-	} else {
-		diver = lhs
-	}
-	receiver, ok := diver.(Diver)
+	receiver, ok := lhs.(Diver)
 	if !ok {
 		panic("TypeError")
 	}

@@ -5,10 +5,6 @@ type Cons struct {
 	Cdr Evaluable
 }
 
-func (c Cons) Add(ac Evaluable) Evaluable {
-	return Cons{Car: c, Cdr: ac}
-}
-
-func (c Cons) eval() Evaluable {
-	return c
+func (c Cons) eval(lss ...LocalScope) Evaluable {
+	return Cons{Car: c.Car.eval(lss...), Cdr: c.Cdr.eval(lss...)}
 }
