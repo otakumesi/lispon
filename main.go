@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"./lisp"
+	"github.com/otakumesi/lispon/lisp"
 )
 
 func main() {
