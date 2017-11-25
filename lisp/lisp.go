@@ -9,3 +9,9 @@ func Eval(l Evaluable) Evaluable {
 }
 
 type LocalScope SymbolTable
+
+func Run(sexprTxt string) Evaluable {
+	rootAst := Parse(sexprTxt)
+	sexpr := CreateEvaluator(rootAst)
+	return Eval(sexpr)
+}

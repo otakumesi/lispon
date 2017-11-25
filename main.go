@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"./lisp"
-	"./parser"
 )
 
 func main() {
@@ -18,10 +17,7 @@ func repl() {
 	stdin := bufio.NewScanner(os.Stdin)
 	fmt.Print("> ")
 	for stdin.Scan() {
-		text := stdin.Text()
-		rootAst := parser.Parse(text)
-		sexpr := parser.ParseSExpr(rootAst)
-		fmt.Println("=> ",  lisp.Eval(sexpr))
+		fmt.Println("=> ", lisp.Run(stdin.Text()))
 		fmt.Print("> ")
 	}
 }
