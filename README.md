@@ -2,6 +2,8 @@
 
 This Product is Lisp implemented in Golang.
 
+![demo](https://raw.githubusercontent.com/otakumesi/lispon/master/demo.gif "lisponDemo")
+
 # Usage
 
 ```
