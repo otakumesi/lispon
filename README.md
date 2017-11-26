@@ -15,5 +15,6 @@ go install github.com/otakumesi/lispon
 - [ ] update test
 - [ ] implement atom
 - [ ] implement defun
+- [ ] implement apply
 - [ ] implement file execution
-- [ ] implement pipe (ex. operator "|>")
+- [X] implement pipe (ex. operator "|>")

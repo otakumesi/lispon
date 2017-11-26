@@ -31,13 +31,15 @@ func Parse(input string) parsec.Queryable {
 
 	operator := parsec.Token(`[+-/*%]`, "OPERATOR")
 	symbol := ast.OrdChoice("symbol", nil, operator, parsec.Ident())
+	maybeItems := ast.Maybe("maybeItems", nil, items)
+
 	expr = ast.And(
 		"expr",
 		nil,
 		openSexpr,
 		symbol,
 		ast.Maybe("lhs", nil, item),
-		ast.Maybe("rhs", nil, items),
+		maybeItems,
 		closeSexpr,
 	)
 
@@ -48,7 +50,7 @@ func Parse(input string) parsec.Queryable {
 		openSexpr,
 		lambda,
 		openSexpr,
-		ast.Maybe("lambdaArgs", nil, items),
+		maybeItems,
 		closeSexpr,
 		expr,
 		closeSexpr,
@@ -65,7 +67,24 @@ func Parse(input string) parsec.Queryable {
 		closeSexpr,
 	)
 
-	sexpr := ast.OrdChoice("sexpr", nil, defineExpr, lambdaExpr, expr)
+	pipe := parsec.Token(`\|>`, "PIPE")
+	pipeTarget := ast.And(
+		"pipeTarget",
+		nil,
+		symbol,
+		maybeItems,
+	)
+	pipeExpr := ast.And(
+		"pipeExpr",
+		nil,
+		openSexpr,
+		item,
+		pipe,
+		pipeTarget,
+		closeSexpr,
+	)
+
+	sexpr := ast.OrdChoice("sexpr", nil, defineExpr, pipeExpr, lambdaExpr, expr)
 
 	s := parsec.NewScanner([]byte(input))
 	node, s := ast.Parsewith(sexpr, s)

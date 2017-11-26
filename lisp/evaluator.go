@@ -15,6 +15,8 @@ func CreateEvaluator(ast parsec.Queryable) Evaluable {
 		return createDefine(children)
 	case "lambdaExpr":
 		return createLambda(children)
+	case "pipeExpr":
+		return createPipe(children)
 	case "expr":
 		return createExpr(children)
 	case "items":
@@ -37,6 +39,7 @@ func CreateEvaluator(ast parsec.Queryable) Evaluable {
 		rawStr := ast.GetValue()
 		return String(rawStr[1 : len(rawStr)-1])
 	case "IDENT":
+	case "OPERATOR":
 		return NewSymbol(ast.GetValue())
 	case "QUOTED_SYMBOL":
 		rawStr := ast.GetValue()
@@ -105,4 +108,16 @@ func createLambda(children []parsec.Queryable) Evaluable {
 		args = append(args, argSym)
 	}
 	return Lambda(form, args...)
+}
+
+func createPipe(children []parsec.Queryable) Evaluable {
+	lhs := CreateEvaluator(children[1])
+
+	pipeTarget := children[3].GetChildren()
+	sym, ok := CreateEvaluator(pipeTarget[0]).(Symbol)
+	if !ok {
+		panic(RUNTIME_ERROR)
+	}
+	rhs := CreateEvaluator(pipeTarget[1])
+	return NewSExpr(sym, SetLhs(lhs), SetRhs(rhs))
 }
