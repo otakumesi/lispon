@@ -11,8 +11,12 @@ func Define(sym Symbol, value Evaluable) Evaluable {
 }
 
 func Lambda(form SExpr, args ...Symbol) Evaluable {
-	localSymTable := LocalScope{}
+	localSymTable := Scope{}
 	f := func(lhs, rhs Evaluable) Evaluable {
+		if lhs == Evaluable(Nil{}) {
+			return form.eval(Scope(GlobalSymbolTable()))
+		}
+
 		localSymTable[args[0].Name] = lhs
 		currentRhs := rhs
 		for _, arg := range args[1:] {
@@ -25,8 +29,7 @@ func Lambda(form SExpr, args ...Symbol) Evaluable {
 				break
 			}
 		}
-
-		return form.eval(localSymTable)
+		return form.eval(Scope(GlobalSymbolTable()), localSymTable)
 	}
 	return Proc(f)
 }

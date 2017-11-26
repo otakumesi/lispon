@@ -43,14 +43,14 @@ func Parse(input string) parsec.Queryable {
 		closeSexpr,
 	)
 
-	lambda := parsec.Token(`lambda`, "LAMBDA")
+	lambda := parsec.Token(`lambda|->`, "LAMBDA")
 	lambdaExpr = ast.And(
 		"lambdaExpr",
 		nil,
 		openSexpr,
 		lambda,
 		openSexpr,
-		items,
+		ast.Maybe("lambdaArgs", nil, items),
 		closeSexpr,
 		expr,
 		closeSexpr,
@@ -71,5 +71,6 @@ func Parse(input string) parsec.Queryable {
 
 	s := parsec.NewScanner([]byte(input))
 	node, s := ast.Parsewith(sexpr, s)
+
 	return node
 }

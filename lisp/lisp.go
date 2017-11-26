@@ -1,17 +1,18 @@
 package lisp
 
 type Evaluable interface {
-	eval(...LocalScope) Evaluable
+	eval(...Scope) Evaluable
 }
 
-func Eval(l Evaluable) Evaluable {
-	return l.eval()
+func Eval(l Evaluable, scs ...Scope) Evaluable {
+	return l.eval(scs...)
 }
 
-type LocalScope SymbolTable
+type Scope SymbolTable
 
 func Run(sexprTxt string) Evaluable {
+	gs := Scope(GlobalSymbolTable())
 	rootAst := Parse(sexprTxt)
 	sexpr := CreateEvaluator(rootAst)
-	return Eval(sexpr)
+	return Eval(sexpr, gs)
 }

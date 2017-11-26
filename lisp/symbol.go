@@ -21,18 +21,18 @@ func SetIsQuote(isQuoted bool) SymbolOption {
 	}
 }
 
-func (s Symbol) eval(lss ...LocalScope) Evaluable {
+func (s Symbol) eval(scs ...Scope) Evaluable {
 	if s.IsQuoted {
 		return String(s.Name)
 	}
 
-	for _, ls := range lss {
-		for name, val := range ls {
+	for _, sc := range scs {
+		for name, val := range sc {
 			if name == s.Name {
 				return val
 			}
 		}
 	}
 
-	return symbolTable[s.Name]
+	return Nil{}
 }

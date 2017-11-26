@@ -2,7 +2,7 @@ package lisp
 
 type String string
 
-func (s String) eval(lss ...LocalScope) Evaluable {
+func (s String) eval(scs ...Scope) Evaluable {
 	return s
 }
 
@@ -12,8 +12,6 @@ func (s String) Add(as Evaluable) Evaluable {
 		return s.AddStr(rs)
 	case Cons:
 		return s.AddCons(rs)
-	case Symbol:
-		return s.Add(rs.eval())
 	case Nil:
 		return s + ""
 	}

@@ -13,7 +13,6 @@ func main() {
 }
 
 func repl() {
-	lisp.Init()
 	stdin := bufio.NewScanner(os.Stdin)
 	fmt.Print("> ")
 	for stdin.Scan() {
