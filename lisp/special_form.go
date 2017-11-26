@@ -29,7 +29,7 @@ func Lambda(form SExpr, args ...Symbol) Evaluable {
 				break
 			}
 		}
-		return form.eval(Scope(GlobalSymbolTable()), localSymTable)
+		return form.eval(localSymTable, Scope(GlobalSymbolTable()))
 	}
 	return Proc(f)
 }
