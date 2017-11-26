@@ -1,5 +1,7 @@
 package lisp
 
+import "fmt"
+
 type Evaluable interface {
 	eval(...Scope) Evaluable
 }
@@ -12,7 +14,11 @@ type Scope SymbolTable
 
 func Run(sexprTxt string) Evaluable {
 	gs := Scope(GlobalSymbolTable())
-	rootAst := Parse(sexprTxt)
-	sexpr := CreateEvaluator(rootAst)
-	return Eval(sexpr, gs)
+	sexpr := Parse(sexprTxt)
+	if sexpr == nil {
+		fmt.Println(PARSE_ERROR)
+		return Nil{}
+	}
+	lispEvaluator := CreateEvaluator(sexpr)
+	return Eval(lispEvaluator, gs)
 }

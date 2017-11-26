@@ -4,8 +4,6 @@ import (
 	"github.com/prataprc/goparsec"
 )
 
-var RUNTIME_ERROR = "Runtime Error"
-
 func Parse(input string) parsec.Queryable {
 	var expr parsec.Parser
 	var lambdaExpr parsec.Parser
