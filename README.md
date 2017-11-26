@@ -10,3 +10,10 @@ This Product is Lisp implemented in Golang.
 go get github.com/otakumesi/lispon
 go install github.com/otakumesi/lispon
 ```
+
+# TODO
+- [ ] update test
+- [ ] implement atom
+- [ ] implement defun
+- [ ] implement file execution
+- [ ] implement pipe (ex. operator "|>")
