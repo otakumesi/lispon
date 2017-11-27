@@ -2,7 +2,7 @@ package lisp
 
 type String string
 
-func (s String) eval(scs ...Scope) Evaluable {
+func (s String) eval() Evaluable {
 	return s
 }
 

@@ -21,13 +21,13 @@ func SetIsQuote(isQuoted bool) SymbolOption {
 	}
 }
 
-func (s Symbol) eval(scs ...Scope) Evaluable {
+func (s Symbol) eval() Evaluable {
 	if s.IsQuoted {
 		return String(s.Name)
 	}
 
-	for _, sc := range scs {
-		for name, val := range sc {
+	for _, sc := range GetEnv().ScopeStacks {
+		for name, val := range *sc {
 			if name == s.Name {
 				return val
 			}

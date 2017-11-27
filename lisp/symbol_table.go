@@ -8,13 +8,13 @@ func (s Symbol) call(lhs, rhs Evaluable) Evaluable {
 	return proc(lhs, rhs)
 }
 
-type SymbolTable map[string]Evaluable
+type Scope map[string]Evaluable
 
-var symbolTable = SymbolTable{}
+var symbolTable = Scope{}
 
-func GlobalSymbolTable() SymbolTable {
+func GlobalSymbolTable() *Scope {
 	if len(symbolTable) < 1 {
-		symbolTable = SymbolTable{
+		symbolTable = Scope{
 			"+":  Proc(Add),
 			"-":  Proc(Sub),
 			"*":  Proc(Mul),
@@ -22,5 +22,5 @@ func GlobalSymbolTable() SymbolTable {
 			"eq": Proc(Eq),
 		}
 	}
-	return symbolTable
+	return &symbolTable
 }

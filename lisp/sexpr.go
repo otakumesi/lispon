@@ -32,13 +32,13 @@ func SetRhs(rhs Evaluable) SexprArgs {
 	}
 }
 
-func (s SExpr) eval(scs ...Scope) Evaluable {
-	symbol := s.symbol.eval(scs...)
+func (s SExpr) eval() Evaluable {
+	symbol := s.symbol.eval()
 
 	proc, isProc := symbol.(Proc)
 	if !isProc {
-		return symbol.eval(scs...)
+		return symbol.eval()
 	}
 
-	return proc(s.lhs.eval(scs...), s.rhs.eval(scs...))
+	return proc(s.lhs.eval(), s.rhs.eval())
 }

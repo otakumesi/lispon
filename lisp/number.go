@@ -2,7 +2,7 @@ package lisp
 
 type Number float64
 
-func (n Number) eval(scs ...Scope) Evaluable {
+func (n Number) eval() Evaluable {
 	return n
 }
 

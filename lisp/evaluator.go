@@ -39,6 +39,7 @@ func CreateEvaluator(ast parsec.Queryable) Evaluable {
 		rawStr := ast.GetValue()
 		return String(rawStr[1 : len(rawStr)-1])
 	case "IDENT":
+		return NewSymbol(ast.GetValue())
 	case "OPERATOR":
 		return NewSymbol(ast.GetValue())
 	case "QUOTED_SYMBOL":

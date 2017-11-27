@@ -5,6 +5,6 @@ type Cons struct {
 	Cdr Evaluable
 }
 
-func (c Cons) eval(scs ...Scope) Evaluable {
-	return Cons{Car: c.Car.eval(scs...), Cdr: c.Cdr.eval(scs...)}
+func (c Cons) eval() Evaluable {
+	return Cons{Car: c.Car.eval(), Cdr: c.Cdr.eval()}
 }

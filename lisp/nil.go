@@ -2,6 +2,6 @@ package lisp
 
 type Nil struct{}
 
-func (n Nil) eval(scs ...Scope) Evaluable {
+func (n Nil) eval() Evaluable {
 	return n
 }
