@@ -2,10 +2,11 @@ package lisp
 
 func Define(sym Symbol, value Evaluable) Evaluable {
 	sexpr, isSexpr := value.(SExpr)
+	globalSymbolTable := *GlobalSymbolTable()
 	if isSexpr {
-		symbolTable[sym.Name] = sexpr.eval()
+		globalSymbolTable[sym.Name] = sexpr.eval()
 	} else {
-		symbolTable[sym.Name] = value
+		globalSymbolTable[sym.Name] = value
 	}
 	return sym
 }
@@ -17,7 +18,7 @@ func Lambda(form SExpr, args ...Symbol) Evaluable {
 			return form.eval()
 		}
 
-		GetEnv().Push(&localSymTable)
+		GetEnv().Unshift(&localSymTable)
 		localSymTable[args[0].Name] = lhs
 		currentRhs := rhs
 		for _, arg := range args[1:] {
@@ -31,7 +32,7 @@ func Lambda(form SExpr, args ...Symbol) Evaluable {
 			}
 		}
 		result := form.eval()
-		GetEnv().Pop()
+		GetEnv().Shift()
 		return result
 	}
 	return Proc(f)

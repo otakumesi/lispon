@@ -26,7 +26,7 @@ func (s Symbol) eval() Evaluable {
 		return String(s.Name)
 	}
 
-	for _, sc := range GetEnv().ScopeStacks {
+	for _, sc := range GetEnv().Scopes {
 		for name, val := range *sc {
 			if name == s.Name {
 				return val

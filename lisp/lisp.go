@@ -12,7 +12,7 @@ func Eval(l Evaluable) Evaluable {
 
 func Run(sexprTxt string) Evaluable {
 	env := GetEnv()
-	env.Push(GlobalSymbolTable())
+	env.Unshift(GlobalSymbolTable())
 	sexpr := Parse(sexprTxt)
 	if sexpr == nil {
 		fmt.Println(PARSE_ERROR)
@@ -23,17 +23,17 @@ func Run(sexprTxt string) Evaluable {
 }
 
 type Env struct {
-	ScopeStacks []*Scope
+	Scopes []*Scope
 }
 
-func (e *Env) Push(s *Scope) {
-	e.ScopeStacks = append(e.ScopeStacks, s)
+func (e *Env) Unshift(s *Scope) {
+	e.Scopes = append([]*Scope{s}, e.Scopes...)
 }
 
-func (e *Env) Pop() *Scope {
-	popScope := e.ScopeStacks[len(e.ScopeStacks)-1]
-	e.ScopeStacks = e.ScopeStacks[0 : len(e.ScopeStacks)-2]
-	return popScope
+func (e *Env) Shift() *Scope {
+	shiftScope, newScopes := e.Scopes[0], e.Scopes[1:]
+	e.Scopes = newScopes
+	return shiftScope
 }
 
 var env = &Env{}
