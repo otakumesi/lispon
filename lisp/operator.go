@@ -1,10 +1,12 @@
 package lisp
 
+import "fmt"
+
 type Adder interface {
-	Add(Evaluable) Evaluable
+	Add(Evaler) Evaler
 }
 
-func Add(lhs, rhs Evaluable) Evaluable {
+func Add(lhs, rhs Evaler) Evaler {
 	receiver, ok := lhs.(Adder)
 	if !ok {
 		panic("TypeError")
@@ -13,10 +15,10 @@ func Add(lhs, rhs Evaluable) Evaluable {
 }
 
 type Suber interface {
-	Sub(Evaluable) Evaluable
+	Sub(Evaler) Evaler
 }
 
-func Sub(lhs, rhs Evaluable) Evaluable {
+func Sub(lhs, rhs Evaler) Evaler {
 	receiver, ok := lhs.(Suber)
 	if !ok {
 		panic("TypeError")
@@ -25,10 +27,10 @@ func Sub(lhs, rhs Evaluable) Evaluable {
 }
 
 type Muler interface {
-	Mul(Evaluable) Evaluable
+	Mul(Evaler) Evaler
 }
 
-func Mul(lhs, rhs Evaluable) Evaluable {
+func Mul(lhs, rhs Evaler) Evaler {
 	receiver, ok := lhs.(Muler)
 	if !ok {
 		panic("TypeError")
@@ -37,10 +39,10 @@ func Mul(lhs, rhs Evaluable) Evaluable {
 }
 
 type Diver interface {
-	Div(Evaluable) Evaluable
+	Div(Evaler) Evaler
 }
 
-func Div(lhs, rhs Evaluable) Evaluable {
+func Div(lhs, rhs Evaler) Evaler {
 	receiver, ok := lhs.(Diver)
 	if !ok {
 		panic("TypeError")
@@ -48,10 +50,14 @@ func Div(lhs, rhs Evaluable) Evaluable {
 	return receiver.Div(rhs)
 }
 
-func Eq(lhs, rhs Evaluable) Evaluable {
+func Eq(lhs, rhs Evaler) Evaler {
 	cons, ok := rhs.(Cons)
 	if ok && (cons.Cdr == Nil{}) {
 		return Eq(lhs, cons.Car)
 	}
-	return Bool(lhs == rhs)
+	if lhs != rhs {
+		return Nil{}
+	}
+	fmt.Println(T{})
+	return T{}
 }

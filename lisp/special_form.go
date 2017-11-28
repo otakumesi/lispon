@@ -1,6 +1,6 @@
 package lisp
 
-func Define(sym Symbol, value Evaluable) Evaluable {
+func Define(sym Symbol, value Evaler) Evaler {
 	sexpr, isSexpr := value.(SExpr)
 	globalSymbolTable := *GlobalSymbolTable()
 	if isSexpr {
@@ -11,10 +11,10 @@ func Define(sym Symbol, value Evaluable) Evaluable {
 	return sym
 }
 
-func Lambda(form SExpr, args ...Symbol) Evaluable {
+func Lambda(form SExpr, args ...Symbol) Evaler {
 	localSymTable := Scope{}
-	f := func(lhs, rhs Evaluable) Evaluable {
-		if lhs == Evaluable(Nil{}) {
+	f := func(lhs, rhs Evaler) Evaler {
+		if lhs == Evaler(Nil{}) {
 			return form.eval()
 		}
 
@@ -36,4 +36,12 @@ func Lambda(form SExpr, args ...Symbol) Evaluable {
 		return result
 	}
 	return Proc(f)
+}
+
+func IsAtom(e Evaler) Evaler {
+	cons, isCons := e.(Cons)
+	if isCons && cons.Cdr == Evaler(Nil{}) {
+		return cons.Car.IsAtom()
+	}
+	return e.IsAtom()
 }

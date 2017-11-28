@@ -21,10 +21,22 @@ func SetIsQuote(isQuoted bool) SymbolOption {
 	}
 }
 
-func (s Symbol) eval() Evaluable {
+func (s Symbol) eval() Evaler {
 	if s.IsQuoted {
 		return String(s.Name)
 	}
 
 	return GetEnv().GetValue(s)
+}
+
+func (s Symbol) IsAtom() Evaler {
+	return T{}
+}
+
+func (s Symbol) call(lhs, rhs Evaler) Evaler {
+	proc, ok := symbolTable[s.Name].(Proc)
+	if !ok {
+		panic("Type Error")
+	}
+	return proc(lhs, rhs)
 }

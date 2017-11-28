@@ -1,7 +1,11 @@
 package lisp
 
-type Proc func(Evaluable, Evaluable) Evaluable
+type Proc func(Evaler, Evaler) Evaler
 
-func (p Proc) eval() Evaluable {
+func (p Proc) eval() Evaler {
 	return p
+}
+
+func (p Proc) IsAtom() Evaler {
+	return T{}
 }

@@ -2,11 +2,15 @@ package lisp
 
 type Number float64
 
-func (n Number) eval() Evaluable {
+func (n Number) eval() Evaler {
 	return n
 }
 
-func (n Number) Add(an Evaluable) Evaluable {
+func (n Number) IsAtom() Evaler {
+	return T{}
+}
+
+func (n Number) Add(an Evaler) Evaler {
 	switch rn := an.(type) {
 	case Number:
 		return n.AddNumber(rn)
@@ -16,11 +20,11 @@ func (n Number) Add(an Evaluable) Evaluable {
 	panic("TypeError")
 }
 
-func (n Number) AddNumber(an Number) Evaluable {
+func (n Number) AddNumber(an Number) Evaler {
 	return n + an
 }
 
-func (n Number) AddCons(c Cons) Evaluable {
+func (n Number) AddCons(c Cons) Evaler {
 	re, ok := c.Car.(Number)
 
 	if !ok {
@@ -37,7 +41,7 @@ func (n Number) AddCons(c Cons) Evaluable {
 	return sum.Add(c.Cdr)
 }
 
-func (n Number) Sub(an Evaluable) Evaluable {
+func (n Number) Sub(an Evaler) Evaler {
 	switch rn := an.(type) {
 	case Number:
 		return n.SubNumber(rn)
@@ -47,11 +51,11 @@ func (n Number) Sub(an Evaluable) Evaluable {
 	panic("TypeError")
 }
 
-func (n Number) SubNumber(an Number) Evaluable {
+func (n Number) SubNumber(an Number) Evaler {
 	return n - an
 }
 
-func (n Number) SubCons(c Cons) Evaluable {
+func (n Number) SubCons(c Cons) Evaler {
 	re, ok := c.Car.(Number)
 
 	if !ok {
@@ -68,7 +72,7 @@ func (n Number) SubCons(c Cons) Evaluable {
 	return sum.Sub(c.Cdr)
 }
 
-func (n Number) Mul(an Evaluable) Evaluable {
+func (n Number) Mul(an Evaler) Evaler {
 	switch rn := an.(type) {
 	case Number:
 		return n.MulNumber(rn)
@@ -78,11 +82,11 @@ func (n Number) Mul(an Evaluable) Evaluable {
 	panic("TypeError")
 }
 
-func (n Number) MulNumber(on Number) Evaluable {
+func (n Number) MulNumber(on Number) Evaler {
 	return n * on
 }
 
-func (n Number) MulCons(c Cons) Evaluable {
+func (n Number) MulCons(c Cons) Evaler {
 	re, ok := c.Car.(Number)
 
 	if !ok {
@@ -99,7 +103,7 @@ func (n Number) MulCons(c Cons) Evaluable {
 	return sum.Mul(c.Cdr)
 }
 
-func (n Number) Div(an Evaluable) Evaluable {
+func (n Number) Div(an Evaler) Evaler {
 	switch rn := an.(type) {
 	case Number:
 		return n.DivNumber(rn)
@@ -109,11 +113,11 @@ func (n Number) Div(an Evaluable) Evaluable {
 	panic("TypeError")
 }
 
-func (n Number) DivNumber(an Number) Evaluable {
+func (n Number) DivNumber(an Number) Evaler {
 	return n / an
 }
 
-func (n Number) DivCons(c Cons) Evaluable {
+func (n Number) DivCons(c Cons) Evaler {
 	re, ok := c.Car.(Number)
 
 	if !ok {

@@ -1,14 +1,6 @@
 package lisp
 
-func (s Symbol) call(lhs, rhs Evaluable) Evaluable {
-	proc, ok := symbolTable[s.Name].(Proc)
-	if !ok {
-		panic("Type Error")
-	}
-	return proc(lhs, rhs)
-}
-
-type Scope map[string]Evaluable
+type Scope map[string]Evaler
 
 var symbolTable = Scope{}
 

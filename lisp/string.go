@@ -2,11 +2,15 @@ package lisp
 
 type String string
 
-func (s String) eval() Evaluable {
+func (s String) eval() Evaler {
 	return s
 }
 
-func (s String) Add(as Evaluable) Evaluable {
+func (s String) IsAtom() Evaler {
+	return T{}
+}
+
+func (s String) Add(as Evaler) Evaler {
 	switch rs := as.(type) {
 	case String:
 		return s.AddStr(rs)
@@ -18,11 +22,11 @@ func (s String) Add(as Evaluable) Evaluable {
 	panic("TypeError")
 }
 
-func (s String) AddStr(as String) Evaluable {
+func (s String) AddStr(as String) Evaler {
 	return s + as
 }
 
-func (s String) AddCons(c Cons) Evaluable {
+func (s String) AddCons(c Cons) Evaler {
 	Car, ok := c.Car.(String)
 
 	if !ok {

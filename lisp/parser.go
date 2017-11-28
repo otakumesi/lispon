@@ -7,6 +7,8 @@ import (
 func Parse(input string) parsec.Queryable {
 	var expr parsec.Parser
 	var lambdaExpr parsec.Parser
+	var pipeExpr parsec.Parser
+	var isAtomExpr parsec.Parser
 	ast := parsec.NewAST("lisp", 100)
 
 	openSexpr := parsec.Atom("(", "OPEN_SEXPR")
@@ -23,6 +25,8 @@ func Parse(input string) parsec.Queryable {
 		quoteSymbol,
 		string,
 		&lambdaExpr,
+		&pipeExpr,
+		&isAtomExpr,
 		&expr,
 	)
 
@@ -74,7 +78,7 @@ func Parse(input string) parsec.Queryable {
 		symbol,
 		maybeItems,
 	)
-	pipeExpr := ast.And(
+	pipeExpr = ast.And(
 		"pipeExpr",
 		nil,
 		openSexpr,
@@ -84,7 +88,17 @@ func Parse(input string) parsec.Queryable {
 		closeSexpr,
 	)
 
-	sexpr := ast.OrdChoice("sexpr", nil, defineExpr, pipeExpr, lambdaExpr, expr)
+	isAtom := parsec.Token(`atom`, "IS_ATOM")
+	isAtomExpr = ast.And(
+		"isAtomExpr",
+		nil,
+		openSexpr,
+		isAtom,
+		items,
+		closeSexpr,
+	)
+
+	sexpr := ast.OrdChoice("sexpr", nil, defineExpr, isAtomExpr, pipeExpr, lambdaExpr, expr)
 
 	s := parsec.NewScanner([]byte(input))
 	node, s := ast.Parsewith(sexpr, s)

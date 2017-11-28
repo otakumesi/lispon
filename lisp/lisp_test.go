@@ -8,7 +8,7 @@ import (
 
 func TestLisp(t *testing.T) {
 	type Case struct {
-		in, out Evaluable
+		in, out Evaler
 	}
 	numAddSexpr := setUpNumberSexpr("+", 5, 6, 7)
 	numSubSexpr := setUpNumberSexpr("-", 5, 6, 7)

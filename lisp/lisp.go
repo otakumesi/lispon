@@ -2,15 +2,16 @@ package lisp
 
 import "fmt"
 
-type Evaluable interface {
-	eval() Evaluable
+type Evaler interface {
+	eval() Evaler
+	IsAtom() Evaler
 }
 
-func Eval(l Evaluable) Evaluable {
+func Eval(l Evaler) Evaler {
 	return l.eval()
 }
 
-func Run(sexprTxt string) Evaluable {
+func Run(sexprTxt string) Evaler {
 	env := GetEnv()
 	env.Unshift(GlobalSymbolTable())
 	sexpr := Parse(sexprTxt)
@@ -36,7 +37,7 @@ func (e *Env) Shift() *Scope {
 	return shiftScope
 }
 
-func (e Env) GetValue(s Symbol) Evaluable {
+func (e Env) GetValue(s Symbol) Evaler {
 	for _, sc := range GetEnv().Scopes {
 		for name, val := range *sc {
 			if name == s.Name {

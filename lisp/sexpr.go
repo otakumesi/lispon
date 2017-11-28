@@ -2,8 +2,8 @@ package lisp
 
 type SExpr struct {
 	symbol Symbol
-	lhs    Evaluable
-	rhs    Evaluable
+	lhs    Evaler
+	rhs    Evaler
 }
 
 type SexprArgs func(*SExpr)
@@ -16,7 +16,7 @@ func NewSExpr(sym Symbol, args ...SexprArgs) SExpr {
 	return sexpr
 }
 
-func SetLhs(lhs Evaluable) SexprArgs {
+func SetLhs(lhs Evaler) SexprArgs {
 	return func(s *SExpr) {
 		if lhs != nil {
 			s.lhs = lhs
@@ -24,7 +24,7 @@ func SetLhs(lhs Evaluable) SexprArgs {
 	}
 }
 
-func SetRhs(rhs Evaluable) SexprArgs {
+func SetRhs(rhs Evaler) SexprArgs {
 	return func(s *SExpr) {
 		if rhs != nil {
 			s.rhs = rhs
@@ -32,7 +32,7 @@ func SetRhs(rhs Evaluable) SexprArgs {
 	}
 }
 
-func (s SExpr) eval() Evaluable {
+func (s SExpr) eval() Evaler {
 	symbol := s.symbol.eval()
 
 	proc, isProc := symbol.(Proc)
@@ -41,4 +41,8 @@ func (s SExpr) eval() Evaluable {
 	}
 
 	return proc(s.lhs.eval(), s.rhs.eval())
+}
+
+func (s SExpr) IsAtom() Evaler {
+	return Nil{}
 }

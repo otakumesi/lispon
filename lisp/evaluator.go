@@ -6,7 +6,7 @@ import (
 	parsec "github.com/prataprc/goparsec"
 )
 
-func CreateEvaluator(ast parsec.Queryable) Evaluable {
+func CreateEvaluator(ast parsec.Queryable) Evaler {
 	children := ast.GetChildren()
 	switch ast.GetName() {
 	case "sexpr":
@@ -17,6 +17,8 @@ func CreateEvaluator(ast parsec.Queryable) Evaluable {
 		return createLambda(children)
 	case "pipeExpr":
 		return createPipe(children)
+	case "isAtomExpr":
+		return createIsAtom(children)
 	case "expr":
 		return createExpr(children)
 	case "items":
@@ -49,14 +51,14 @@ func CreateEvaluator(ast parsec.Queryable) Evaluable {
 	return Nil{}
 }
 
-func createItems(children []parsec.Queryable) Evaluable {
+func createItems(children []parsec.Queryable) Evaler {
 	if children[1].GetName() == "missing" {
 		return CreateEvaluator(children[0])
 	}
 	return Cons{CreateEvaluator(children[0]), CreateEvaluator(children[1])}
 }
 
-func createItem(children []parsec.Queryable) Evaluable {
+func createItem(children []parsec.Queryable) Evaler {
 	return CreateEvaluator(children[0])
 }
 
@@ -76,7 +78,7 @@ func createExpr(children []parsec.Queryable) SExpr {
 	return NewSExpr(sym, SetLhs(lhs), SetRhs(rhs))
 }
 
-func createDefine(children []parsec.Queryable) Evaluable {
+func createDefine(children []parsec.Queryable) Evaler {
 	argSym, ok := CreateEvaluator(children[2]).(Symbol)
 
 	if !ok {
@@ -87,7 +89,7 @@ func createDefine(children []parsec.Queryable) Evaluable {
 	return Define(argSym, expr)
 }
 
-func createLambda(children []parsec.Queryable) Evaluable {
+func createLambda(children []parsec.Queryable) Evaler {
 	form, ok := CreateEvaluator(children[5]).(SExpr)
 
 	if !ok {
@@ -97,7 +99,7 @@ func createLambda(children []parsec.Queryable) Evaluable {
 	var args []Symbol
 	for _, child := range children[3].GetChildren() {
 		arg := CreateEvaluator(child)
-		if arg == Evaluable(Nil{}) {
+		if arg == Evaler(Nil{}) {
 			continue
 		}
 
@@ -111,7 +113,7 @@ func createLambda(children []parsec.Queryable) Evaluable {
 	return Lambda(form, args...)
 }
 
-func createPipe(children []parsec.Queryable) Evaluable {
+func createPipe(children []parsec.Queryable) Evaler {
 	lhs := CreateEvaluator(children[1])
 
 	pipeTarget := children[3].GetChildren()
@@ -121,4 +123,9 @@ func createPipe(children []parsec.Queryable) Evaluable {
 	}
 	rhs := CreateEvaluator(pipeTarget[1])
 	return NewSExpr(sym, SetLhs(lhs), SetRhs(rhs))
+}
+
+func createIsAtom(children []parsec.Queryable) Evaler {
+	e := CreateEvaluator(children[2])
+	return IsAtom(e)
 }
