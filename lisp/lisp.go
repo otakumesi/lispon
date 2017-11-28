@@ -36,6 +36,17 @@ func (e *Env) Shift() *Scope {
 	return shiftScope
 }
 
+func (e Env) GetValue(s Symbol) Evaluable {
+	for _, sc := range GetEnv().Scopes {
+		for name, val := range *sc {
+			if name == s.Name {
+				return val
+			}
+		}
+	}
+	return Nil{}
+}
+
 var env = &Env{}
 
 func GetEnv() *Env {
