@@ -13,8 +13,11 @@ go install github.com/otakumesi/lispon
 
 # TODO
 - [ ] update test
-- [ ] implement atom
-- [ ] implement defun
+- [X] implement atom
+- [ ] implement cons(SpecialForm)
+- [ ] implement if
+- [X] implement lambda
+- [X] implement define
 - [ ] implement apply
 - [ ] implement file execution
 - [X] implement pipe (ex. operator "|>")
