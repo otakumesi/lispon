@@ -19,6 +19,8 @@ func Lambda(form SExpr, args ...Symbol) Evaler {
 		}
 
 		GetEnv().Unshift(&localSymTable)
+		defer GetEnv().Shift()
+
 		localSymTable[args[0].Name] = lhs
 		currentRhs := rhs
 		for _, arg := range args[1:] {
@@ -31,9 +33,7 @@ func Lambda(form SExpr, args ...Symbol) Evaler {
 				break
 			}
 		}
-		result := form.eval()
-		GetEnv().Shift()
-		return result
+		return form.eval()
 	}
 	return Proc(f)
 }
