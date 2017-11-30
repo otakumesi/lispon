@@ -14,8 +14,8 @@ func (s String) Add(as Evaler) Evaler {
 	switch rs := as.(type) {
 	case String:
 		return s.AddStr(rs)
-	case Cons:
-		return s.AddCons(rs)
+	case Pair:
+		return s.AddPair(rs)
 	case Nil:
 		return s + ""
 	}
@@ -26,19 +26,19 @@ func (s String) AddStr(as String) Evaler {
 	return s + as
 }
 
-func (s String) AddCons(c Cons) Evaler {
-	Car, ok := c.Car.(String)
+func (s String) AddPair(c Pair) Evaler {
+	car, ok := c.Car().(String)
 
 	if !ok {
 		panic("TypeError")
 	}
 
-	result := s + Car
+	result := s + car
 
-	_, isNil := c.Cdr.(Nil)
+	_, isNil := c.Cdr().(Nil)
 	if isNil {
 		return result
 	}
 
-	return result.Add(c.Cdr)
+	return result.Add(c.Cdr())
 }

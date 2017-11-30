@@ -24,10 +24,10 @@ func Lambda(form SExpr, args ...Symbol) Evaler {
 		localSymTable[args[0].Name] = lhs
 		currentRhs := rhs
 		for _, arg := range args[1:] {
-			argsRhs, isCons := currentRhs.(Cons)
-			if isCons {
-				localSymTable[arg.Name] = argsRhs.Car
-				currentRhs = argsRhs.Cdr
+			argsRhs, isPair := currentRhs.(Pair)
+			if isPair {
+				localSymTable[arg.Name] = argsRhs.Car()
+				currentRhs = argsRhs.Cdr()
 			} else {
 				localSymTable[arg.Name] = rhs
 				break
@@ -39,9 +39,9 @@ func Lambda(form SExpr, args ...Symbol) Evaler {
 }
 
 func IsAtom(e Evaler) Evaler {
-	cons, isCons := e.(Cons)
-	if isCons && cons.Cdr == Evaler(Nil{}) {
-		return cons.Car.IsAtom()
+	cons, isPair := e.(Pair)
+	if isPair && cons.Cdr() == Evaler(Nil{}) {
+		return cons.Car().IsAtom()
 	}
 	return e.IsAtom()
 }

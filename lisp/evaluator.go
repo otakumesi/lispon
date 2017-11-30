@@ -55,7 +55,7 @@ func createItems(children []parsec.Queryable) Evaler {
 	if children[1].GetName() == "missing" {
 		return CreateEvaluator(children[0])
 	}
-	return Cons{CreateEvaluator(children[0]), CreateEvaluator(children[1])}
+	return Pair{CreateEvaluator(children[0]), CreateEvaluator(children[1])}
 }
 
 func createItem(children []parsec.Queryable) Evaler {
