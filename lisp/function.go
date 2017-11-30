@@ -2,26 +2,50 @@ package lisp
 
 import "fmt"
 
-func Cons(lhs, rhs Evaler) Evaler {
-	return Pair{lhs, rhs}
+func Cons(args ...Evaler) Evaler {
+	if len(args[1:]) < 2 {
+		return Pair{args[0], args[1]}
+	}
+	return Pair{args[0], Cons(args[1])}
 }
 
-func Eq(lhs, rhs Evaler) Evaler {
-	cons, ok := rhs.(Pair)
-	if ok && (cons.Cdr() == Nil{}) {
-		return Eq(lhs, cons.Car())
+func Eq(args ...Evaler) Evaler {
+	if Cdr(args[1]) == Evaler(Nil{}) {
+		return Eq(args[0], Car(args[1]))
 	}
-	if lhs != rhs {
+	if args[0] != args[1] {
 		return Nil{}
 	}
 	return T{}
 }
 
-func Print(lhs, rhs Evaler) Evaler {
-	if rhs != Evaler(Nil{}) {
-		fmt.Println(lhs, rhs)
-	} else {
-		fmt.Println(lhs)
+func Car(args ...Evaler) Evaler {
+	if len(args) > 2 {
+		return Nil{}
 	}
+	pair, isPair := args[0].(Pair)
+
+	if !isPair {
+		return Nil{}
+	}
+
+	return pair.lhs
+}
+
+func Cdr(args ...Evaler) Evaler {
+	if len(args) > 2 {
+		return Nil{}
+	}
+	pair, isPair := args[0].(Pair)
+
+	if !isPair {
+		return Nil{}
+	}
+
+	return pair.rhs
+}
+
+func Print(args ...Evaler) Evaler {
+	fmt.Println(args)
 	return Nil{}
 }

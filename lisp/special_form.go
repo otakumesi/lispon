@@ -13,25 +13,11 @@ func Define(sym Symbol, value Evaler) Evaler {
 
 func Lambda(form SExpr, args ...Symbol) Evaler {
 	localSymTable := Scope{}
-	f := func(lhs, rhs Evaler) Evaler {
-		if lhs == Evaler(Nil{}) {
-			return form.eval()
-		}
-
+	f := func(funargs ...Evaler) Evaler {
 		GetEnv().Unshift(&localSymTable)
 		defer GetEnv().Shift()
-
-		localSymTable[args[0].Name] = lhs
-		currentRhs := rhs
-		for _, arg := range args[1:] {
-			argsRhs, isPair := currentRhs.(Pair)
-			if isPair {
-				localSymTable[arg.Name] = argsRhs.Car()
-				currentRhs = argsRhs.Cdr()
-			} else {
-				localSymTable[arg.Name] = rhs
-				break
-			}
+		for i, arg := range args {
+			localSymTable[arg.Name] = funargs[i]
 		}
 		return form.eval()
 	}
@@ -39,9 +25,8 @@ func Lambda(form SExpr, args ...Symbol) Evaler {
 }
 
 func IsAtom(e Evaler) Evaler {
-	cons, isPair := e.(Pair)
-	if isPair && cons.Cdr() == Evaler(Nil{}) {
-		return cons.Car().IsAtom()
+	if Cdr(e) == Evaler(Nil{}) {
+		return Car(e).IsAtom()
 	}
 	return e.IsAtom()
 }

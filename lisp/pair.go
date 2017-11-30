@@ -6,15 +6,7 @@ type Pair struct {
 }
 
 func (p Pair) eval() Evaler {
-	return Pair{lhs: p.Car().eval(), rhs: p.Cdr().eval()}
-}
-
-func (p Pair) Car() Evaler {
-	return p.lhs
-}
-
-func (p Pair) Cdr() Evaler {
-	return p.rhs
+	return Pair{lhs: Car(p).eval(), rhs: Cdr(p).eval()}
 }
 
 func (p Pair) IsAtom() Evaler {

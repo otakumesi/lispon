@@ -4,46 +4,46 @@ type Adder interface {
 	Add(Evaler) Evaler
 }
 
-func Add(lhs, rhs Evaler) Evaler {
-	receiver, ok := lhs.(Adder)
+func Add(args ...Evaler) Evaler {
+	receiver, ok := args[0].(Adder)
 	if !ok {
 		panic("TypeError")
 	}
-	return receiver.Add(rhs)
+	return receiver.Add(args[1])
 }
 
 type Suber interface {
 	Sub(Evaler) Evaler
 }
 
-func Sub(lhs, rhs Evaler) Evaler {
-	receiver, ok := lhs.(Suber)
+func Sub(args ...Evaler) Evaler {
+	receiver, ok := args[0].(Suber)
 	if !ok {
 		panic("TypeError")
 	}
-	return receiver.Sub(rhs)
+	return receiver.Sub(args[1])
 }
 
 type Muler interface {
 	Mul(Evaler) Evaler
 }
 
-func Mul(lhs, rhs Evaler) Evaler {
-	receiver, ok := lhs.(Muler)
+func Mul(args ...Evaler) Evaler {
+	receiver, ok := args[0].(Muler)
 	if !ok {
 		panic("TypeError")
 	}
-	return receiver.Mul(rhs)
+	return receiver.Mul(args[1])
 }
 
 type Diver interface {
 	Div(Evaler) Evaler
 }
 
-func Div(lhs, rhs Evaler) Evaler {
-	receiver, ok := lhs.(Diver)
+func Div(args ...Evaler) Evaler {
+	receiver, ok := args[0].(Diver)
 	if !ok {
 		panic("TypeError")
 	}
-	return receiver.Div(rhs)
+	return receiver.Div(args[1])
 }

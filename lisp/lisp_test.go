@@ -14,13 +14,16 @@ func TestLisp(t *testing.T) {
 	numSubSexpr := setUpNumberSexpr("-", 5, 6, 7)
 	numMulSexpr := setUpNumberSexpr("*", 5, 2, 3)
 	numDivSexpr := setUpNumberSexpr("/", 15, 5, 3)
-	symSexpr := setUpSymbolSexpr("+", "otaku", "mesi", "IO")
+	strSexpr := setUpStringSexpr("+", "otaku", "mesi", "IO")
+	env := GetEnv()
+	env.Unshift(GlobalSymbolTable())
+
 	cases := []Case{
-		{numAddSexpr.Eval(), Number(18)},
-		{numSubSexpr.Eval(), Number(-8)},
-		{numMulSexpr.Eval(), Number(30)},
-		{numDivSexpr.Eval(), Number(1)},
-		{symSexpr.Eval(), Symbol("otakumesiIO")},
+		{Eval(numAddSexpr), Number(18)},
+		{Eval(numSubSexpr), Number(-8)},
+		{Eval(numMulSexpr), Number(30)},
+		{Eval(numDivSexpr), Number(1)},
+		{Eval(strSexpr), String("otakumesiIO")},
 	}
 
 	for _, c := range cases {
@@ -28,22 +31,16 @@ func TestLisp(t *testing.T) {
 	}
 }
 
-func setUpNumberSexpr(sym_str string, lhs, rhsR, rhsL int) SExpr {
-	sym := Symbol(sym_str)
-	car := Number(lhs)
-	consL := Number(rhsL)
-	consR := Cons{Number(rhsR), Nil{}}
-	cdr := Cons{consL, consR}
-	sexpr := NewSExpr(sym, car, cdr)
+func setUpNumberSexpr(sym_str string, args ...int) SExpr {
+	sym := NewSymbol(sym_str)
+	pair := Pair{Number(args[1]), Number(args[2])}
+	sexpr := NewSExpr(sym, SetLhs(Number(args[0])), SetRhs(pair))
 	return sexpr
 }
 
-func setUpSymbolSexpr(sym_str, lhs, rhsR, rhsL string) SExpr {
-	sym := Symbol(sym_str)
-	car := Symbol(lhs)
-	consL := Symbol(rhsR)
-	consR := Cons{Symbol(rhsL), Nil{}}
-	cdr := Cons{consL, consR}
-	sexpr := NewSExpr(sym, car, cdr)
+func setUpStringSexpr(sym_str string, args ...string) SExpr {
+	sym := NewSymbol(sym_str)
+	pair := Pair{String(args[1]), String(args[2])}
+	sexpr := NewSExpr(sym, SetLhs(String(args[0])), SetRhs(pair))
 	return sexpr
 }

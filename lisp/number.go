@@ -25,7 +25,7 @@ func (n Number) AddNumber(an Number) Evaler {
 }
 
 func (n Number) AddPair(c Pair) Evaler {
-	re, ok := c.Car().(Number)
+	re, ok := Car(c).(Number)
 
 	if !ok {
 		panic("TypeError")
@@ -33,12 +33,12 @@ func (n Number) AddPair(c Pair) Evaler {
 
 	sum := n + re
 
-	_, isNil := c.Cdr().(Nil)
+	_, isNil := Cdr(c).(Nil)
 	if isNil {
 		return sum
 	}
 
-	return sum.Add(c.Cdr())
+	return sum.Add(Cdr(c))
 }
 
 func (n Number) Sub(an Evaler) Evaler {
@@ -56,7 +56,7 @@ func (n Number) SubNumber(an Number) Evaler {
 }
 
 func (n Number) SubPair(c Pair) Evaler {
-	re, ok := c.Car().(Number)
+	re, ok := Car(c).(Number)
 
 	if !ok {
 		panic("TypeError")
@@ -64,12 +64,12 @@ func (n Number) SubPair(c Pair) Evaler {
 
 	sum := n - re
 
-	_, isNil := c.Cdr().(Nil)
+	_, isNil := Cdr(c).(Nil)
 	if isNil {
 		return sum
 	}
 
-	return sum.Sub(c.Cdr())
+	return sum.Sub(Cdr(c))
 }
 
 func (n Number) Mul(an Evaler) Evaler {
@@ -87,7 +87,7 @@ func (n Number) MulNumber(on Number) Evaler {
 }
 
 func (n Number) MulPair(c Pair) Evaler {
-	re, ok := c.Car().(Number)
+	re, ok := Car(c).(Number)
 
 	if !ok {
 		panic("TypeError")
@@ -95,12 +95,12 @@ func (n Number) MulPair(c Pair) Evaler {
 
 	sum := n * re
 
-	_, isNil := c.Cdr().(Nil)
+	_, isNil := Cdr(c).(Nil)
 	if isNil {
 		return sum
 	}
 
-	return sum.Mul(c.Cdr())
+	return sum.Mul(Cdr(c))
 }
 
 func (n Number) Div(an Evaler) Evaler {
@@ -118,7 +118,7 @@ func (n Number) DivNumber(an Number) Evaler {
 }
 
 func (n Number) DivPair(c Pair) Evaler {
-	re, ok := c.Car().(Number)
+	re, ok := Car(c).(Number)
 
 	if !ok {
 		panic("TypeError")
@@ -126,10 +126,10 @@ func (n Number) DivPair(c Pair) Evaler {
 
 	sum := n / re
 
-	_, isNil := c.Cdr().(Nil)
+	_, isNil := Cdr(c).(Nil)
 	if isNil {
 		return sum
 	}
 
-	return sum.Div(c.Cdr())
+	return sum.Div(Cdr(c))
 }

@@ -27,7 +27,7 @@ func (s String) AddStr(as String) Evaler {
 }
 
 func (s String) AddPair(c Pair) Evaler {
-	car, ok := c.Car().(String)
+	car, ok := Car(c).(String)
 
 	if !ok {
 		panic("TypeError")
@@ -35,10 +35,10 @@ func (s String) AddPair(c Pair) Evaler {
 
 	result := s + car
 
-	_, isNil := c.Cdr().(Nil)
+	_, isNil := Cdr(c).(Nil)
 	if isNil {
 		return result
 	}
 
-	return result.Add(c.Cdr())
+	return result.Add(Cdr(c))
 }

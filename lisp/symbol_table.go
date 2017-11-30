@@ -13,6 +13,8 @@ func GlobalSymbolTable() *Scope {
 			"/":     Proc(Div),
 			"eq":    Proc(Eq),
 			"cons":  Proc(Cons),
+			"car":   Proc(Car),
+			"cdr":   Proc(Cdr),
 			"print": Proc(Print),
 		}
 	}

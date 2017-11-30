@@ -1,6 +1,6 @@
 package lisp
 
-type Proc func(Evaler, Evaler) Evaler
+type Proc func(...Evaler) Evaler
 
 func (p Proc) eval() Evaler {
 	return p
