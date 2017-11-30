@@ -1,7 +1,5 @@
 package lisp
 
-import "fmt"
-
 type Adder interface {
 	Add(Evaler) Evaler
 }
@@ -48,16 +46,4 @@ func Div(lhs, rhs Evaler) Evaler {
 		panic("TypeError")
 	}
 	return receiver.Div(rhs)
-}
-
-func Eq(lhs, rhs Evaler) Evaler {
-	cons, ok := rhs.(Cons)
-	if ok && (cons.Cdr == Nil{}) {
-		return Eq(lhs, cons.Car)
-	}
-	if lhs != rhs {
-		return Nil{}
-	}
-	fmt.Println(T{})
-	return T{}
 }
