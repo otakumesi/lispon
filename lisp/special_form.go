@@ -24,9 +24,9 @@ func Lambda(form SExpr, args ...Symbol) Evaler {
 	return Proc(f)
 }
 
-func IsAtom(e Evaler) Evaler {
-	if Cdr(e) == Evaler(Nil{}) {
-		return Car(e).IsAtom()
+func If(condExp, lhsAction, rhsAction Evaler) Evaler {
+	if condExp.eval() == Evaler(Nil{}) {
+		return rhsAction
 	}
-	return e.IsAtom()
+	return lhsAction
 }

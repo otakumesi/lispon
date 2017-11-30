@@ -16,6 +16,7 @@ func GlobalSymbolTable() *Scope {
 			"car":   Proc(Car),
 			"cdr":   Proc(Cdr),
 			"print": Proc(Print),
+			"atom":  Proc(IsAtom),
 		}
 	}
 	return &symbolTable

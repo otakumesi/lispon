@@ -14,8 +14,8 @@ go install github.com/otakumesi/lispon
 # TODO
 - [ ] update test
 - [X] implement atom
-- [ ] implement cons(SpecialForm)
-- [ ] implement if
+- [X] implement cons(SpecialForm)
+- [X] implement if
 - [X] implement lambda
 - [X] implement define
 - [ ] implement apply

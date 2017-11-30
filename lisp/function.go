@@ -49,3 +49,10 @@ func Print(args ...Evaler) Evaler {
 	fmt.Println(args)
 	return Nil{}
 }
+
+func IsAtom(args ...Evaler) Evaler {
+	if len(args) > 2 || args[1] != Evaler(Nil{}) {
+		return Nil{}
+	}
+	return args[0].IsAtom()
+}

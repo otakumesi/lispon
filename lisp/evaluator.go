@@ -17,8 +17,8 @@ func CreateEvaluator(ast parsec.Queryable) Evaler {
 		return createLambda(children)
 	case "pipeExpr":
 		return createPipe(children)
-	case "isAtomExpr":
-		return createIsAtom(children)
+	case "ifExpr":
+		return createIf(children)
 	case "expr":
 		return createExpr(children)
 	case "items":
@@ -125,7 +125,9 @@ func createPipe(children []parsec.Queryable) Evaler {
 	return NewSExpr(sym, SetLhs(lhs), SetRhs(rhs))
 }
 
-func createIsAtom(children []parsec.Queryable) Evaler {
-	e := CreateEvaluator(children[2])
-	return IsAtom(e)
+func createIf(children []parsec.Queryable) Evaler {
+	condExp := CreateEvaluator(children[2])
+	lhsAction := CreateEvaluator(children[3])
+	rhsAction := CreateEvaluator(children[4])
+	return If(condExp, lhsAction, rhsAction)
 }
