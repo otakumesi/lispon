@@ -6,13 +6,13 @@ This Product is Lisp implemented in Golang.
 
 # Getting Started
 
-```
+```sh
 go get github.com/otakumesi/lispon
 go install github.com/otakumesi/lispon
 ```
 
 # Usage
-```
+```sh
 # Lispon Script File Execution
 lispon hello.lpn
 
