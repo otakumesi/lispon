@@ -6,7 +6,7 @@ func Cons(args ...Evaler) Evaler {
 	if len(args[1:]) < 2 {
 		return Pair{args[0], args[1]}
 	}
-	return Pair{args[0], Cons(args[1])}
+	return Pair{args[0], Cons(args[1:]...)}
 }
 
 func Eq(args ...Evaler) Evaler {
@@ -46,7 +46,13 @@ func Cdr(args ...Evaler) Evaler {
 }
 
 func Print(args ...Evaler) Evaler {
-	fmt.Println(args)
+	for _, arg := range args {
+		if arg == Evaler(Nil{}) {
+			continue
+		}
+		fmt.Printf("%+v", arg)
+	}
+
 	return Nil{}
 }
 

@@ -11,16 +11,20 @@ func Eval(l Evaler) Evaler {
 	return l.eval()
 }
 
-func Run(sexprTxt string) Evaler {
+func Run(sexprTxt string) []Evaler {
 	env := GetEnv()
 	env.Unshift(GlobalSymbolTable())
-	sexpr := Parse(sexprTxt)
-	if sexpr == nil {
+	sexprs := Parse(sexprTxt)
+	if sexprs == nil {
 		fmt.Println(PARSE_ERROR)
-		return Nil{}
+		return []Evaler{Nil{}} // TODO あとで例外処理を考えたときに実装する
 	}
-	lispEvaluator := CreateEvaluator(sexpr)
-	return Eval(lispEvaluator)
+	lispEvaluators := CreateEvaluators(sexprs)
+	var results []Evaler
+	for _, evaluator := range lispEvaluators {
+		results = append(results, Eval(evaluator))
+	}
+	return results
 }
 
 type Env struct {

@@ -30,3 +30,14 @@ func If(condExp, lhsAction, rhsAction Evaler) Evaler {
 	}
 	return lhsAction
 }
+
+func Quote(args ...Evaler) Evaler {
+	if len(args) > 1 {
+		return Cons(args...)
+	}
+	sym, isSym := args[0].(Symbol)
+	if isSym {
+		return NewSymbol(sym.Name, SetIsQuote(true))
+	}
+	return Nil{}
+}

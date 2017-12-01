@@ -6,6 +6,16 @@ import (
 	parsec "github.com/prataprc/goparsec"
 )
 
+func CreateEvaluators(ast parsec.Queryable) []Evaler {
+	var evaluators []Evaler
+	if ast.GetName() == "sexprs" {
+		for _, sexpr := range ast.GetChildren() {
+			evaluators = append(evaluators, CreateEvaluator(sexpr))
+		}
+	}
+	return evaluators
+}
+
 func CreateEvaluator(ast parsec.Queryable) Evaler {
 	children := ast.GetChildren()
 	switch ast.GetName() {
@@ -19,6 +29,8 @@ func CreateEvaluator(ast parsec.Queryable) Evaler {
 		return createPipe(children)
 	case "ifExpr":
 		return createIf(children)
+	case "quoteExpr":
+		return createQuote(children)
 	case "expr":
 		return createExpr(children)
 	case "items":
@@ -130,4 +142,8 @@ func createIf(children []parsec.Queryable) Evaler {
 	lhsAction := CreateEvaluator(children[3])
 	rhsAction := CreateEvaluator(children[4])
 	return If(condExp, lhsAction, rhsAction)
+}
+
+func createQuote(children []parsec.Queryable) Evaler {
+	return Quote(CreateEvaluator(children[2]))
 }
