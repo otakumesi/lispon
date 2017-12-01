@@ -1,0 +1,18 @@
+(define 'html (lambda (contents) (+ "<html>" contents "</html>")))
+(define 'head (lambda (content) (+ "<head>" content "</head>")))
+(define 'title (lambda (content) (+ "<title>" content "</title>")))
+(define 'body (lambda (contents) (+ "<body>" contents "</body>")))
+(define 'h1 (lambda (content) (+ "<h1>" content "</h1>")))
+(define 'p (lambda (content) (+ "<p>" content "</p>")))
+
+(define 'mycontent
+  (html
+   (+
+    (head
+     (title "HelloWorld"))
+    (body
+     (+
+      (h1 "HelloWorld")
+      (p "Hello Create Lisp"))))))
+
+(print mycontent)

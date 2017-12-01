@@ -4,11 +4,24 @@ This Product is Lisp implemented in Golang.
 
 ![demo](https://raw.githubusercontent.com/otakumesi/lispon/master/demo.gif "lisponDemo")
 
-# Usage
+# Getting Started
 
 ```
 go get github.com/otakumesi/lispon
 go install github.com/otakumesi/lispon
+```
+
+# Usage
+```
+# Lispon Script File Execution
+lispon hello.lpn
+
+# Lispon REPL
+lispon -repl
+
+# Command Usage
+lispon
+lispon -h
 ```
 
 # TODO
