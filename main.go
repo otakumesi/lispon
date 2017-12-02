@@ -4,13 +4,10 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"io"
 	"os"
 
 	"github.com/otakumesi/lispon/lisp"
 )
-
-const BUFSIZE = 1024
 
 func main() {
 	flag.Usage = func() {
@@ -34,29 +31,7 @@ func main() {
 		return
 	}
 
-	interpreter()
-}
-
-func interpreter() {
-	file, err := os.Open(os.Args[1])
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
-	buf := make([]byte, BUFSIZE)
-	var sexprs string
-	for {
-		n, err := file.Read(buf)
-		if n == 0 || err == io.EOF {
-			break
-		}
-		if err != nil && err != io.EOF {
-			panic(err)
-		}
-		sexprs = string(buf[:n])
-	}
-	lisp.Run(sexprs)
+	lisp.Interpreter(os.Args[1])
 }
 
 func repl() {

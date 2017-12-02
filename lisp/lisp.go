@@ -1,6 +1,12 @@
 package lisp
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+	"os"
+)
+
+const BUFSIZE = 1024
 
 type Evaler interface {
 	eval() Evaler
@@ -56,4 +62,26 @@ var env = &Env{}
 
 func GetEnv() *Env {
 	return env
+}
+
+func Interpreter(filePath string) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	buf := make([]byte, BUFSIZE)
+	var sexprs string
+	for {
+		n, err := file.Read(buf)
+		if n == 0 || err == io.EOF {
+			break
+		}
+		if err != nil && err != io.EOF {
+			panic(err)
+		}
+		sexprs = string(buf[:n])
+	}
+	Run(sexprs)
 }
