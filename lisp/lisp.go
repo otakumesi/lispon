@@ -64,7 +64,7 @@ func GetEnv() *Env {
 	return env
 }
 
-func Interpreter(filePath string) {
+func Interpreter(filePath string) []Evaler {
 	file, err := os.Open(filePath)
 	if err != nil {
 		panic(err)
@@ -83,5 +83,5 @@ func Interpreter(filePath string) {
 		}
 		sexprs = string(buf[:n])
 	}
-	Run(sexprs)
+	return Run(sexprs)
 }
