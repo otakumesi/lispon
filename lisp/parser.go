@@ -4,7 +4,9 @@ import (
 	"github.com/prataprc/goparsec"
 )
 
+// Parse parse S expression
 func Parse(input string) parsec.Queryable {
+	var sexprs parsec.Parser
 	var expr parsec.Parser
 	var lambdaExpr parsec.Parser
 	var ifExpr parsec.Parser
@@ -15,7 +17,7 @@ func Parse(input string) parsec.Queryable {
 	openSexpr := parsec.Atom("(", "OPEN_SEXPR")
 	closeSexpr := parsec.Atom(")", "CLOSE_SEXPR")
 	quoteSymbol := parsec.Token(`'[A-Za-z][0-9a-zA-Z_]*`, "QUOTED_SYMBOL")
-	string := parsec.Token(`".*?"`, "STRING")
+	str := parsec.Token(`".*?"`, "STRING")
 
 	item := ast.OrdChoice(
 		"item",
@@ -24,7 +26,7 @@ func Parse(input string) parsec.Queryable {
 		parsec.Float(),
 		parsec.Ident(),
 		quoteSymbol,
-		string,
+		str,
 		&lambdaExpr,
 		&pipeExpr,
 		&ifExpr,
@@ -58,7 +60,7 @@ func Parse(input string) parsec.Queryable {
 		openSexpr,
 		maybeItems,
 		closeSexpr,
-		expr,
+		&sexprs,
 		closeSexpr,
 	)
 
@@ -114,7 +116,6 @@ func Parse(input string) parsec.Queryable {
 
 	sexpr := ast.OrdChoice("sexpr", nil, defineExpr, pipeExpr, ifExpr, quoteExpr, lambdaExpr, expr)
 
-	var sexprs parsec.Parser
 	sexprs = ast.Many("sexprs", nil, sexpr)
 
 	s := parsec.NewScanner([]byte(input))

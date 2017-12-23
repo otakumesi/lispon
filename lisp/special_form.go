@@ -2,16 +2,17 @@ package lisp
 
 func Define(sym Symbol, value Evaler) Evaler {
 	sexpr, isSexpr := value.(SExpr)
-	globalSymbolTable := *GlobalSymbolTable()
+
+	symbolTable := *GetEnv().Scopes[0]
 	if isSexpr {
-		globalSymbolTable[sym.Name] = sexpr.eval()
+		symbolTable[sym.Name] = sexpr.eval()
 	} else {
-		globalSymbolTable[sym.Name] = value
+		symbolTable[sym.Name] = value
 	}
 	return sym
 }
 
-func Lambda(form SExpr, args ...Symbol) Evaler {
+func Lambda(forms []SExpr, args ...Symbol) Evaler {
 	localSymTable := Scope{}
 	f := func(funargs ...Evaler) Evaler {
 		GetEnv().Unshift(&localSymTable)
@@ -19,7 +20,11 @@ func Lambda(form SExpr, args ...Symbol) Evaler {
 		for i, arg := range args {
 			localSymTable[arg.Name] = funargs[i]
 		}
-		return form.eval()
+		var results []Evaler
+		for _, form := range forms {
+			results = append(results, form.eval())
+		}
+		return results[len(results)-1]
 	}
 	return Proc(f)
 }

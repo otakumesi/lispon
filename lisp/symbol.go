@@ -34,7 +34,7 @@ func (s Symbol) IsAtom() Evaler {
 }
 
 func (s Symbol) call(lhs, rhs Evaler) Evaler {
-	proc, ok := symbolTable[s.Name].(Proc)
+	proc, ok := GetEnv().GetValue(s).(Proc)
 	if !ok {
 		panic("Type Error")
 	}

@@ -31,7 +31,7 @@ lispon -h
 - [X] implement if
 - [X] implement lambda
 - [X] implement define
-- [ ] implement quote
+- [X] implement quote
 - [ ] implement apply
-- [ ] implement file execution
+- [X] implement file execution
 - [X] implement pipe (ex. operator "|>")

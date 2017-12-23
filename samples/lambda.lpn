@@ -1,0 +1,6 @@
+(define 'y 13)
+(define 'test
+ (lambda (x)
+    (define 'y 1)
+    (+ x y)))
+(print (test 3))
